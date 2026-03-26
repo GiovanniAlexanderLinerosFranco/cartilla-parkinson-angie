@@ -172,7 +172,6 @@ export default function CartillaInteractiva() {
       </main>
 
       <footer className="bg-white border-t p-8 text-center text-slate-400 text-[10px]">
-        <p className="uppercase tracking-[0.3em] font-bold mb-4">Conclusiones Finales (Redacción de Angie)</p>
         <p>© 2026 Universidad Manuela Beltrán — Facultad de Ciencias de la Salud</p>
       </footer>
     </div>
