@@ -1,0 +1,87 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+
+% Configuración de márgenes e identidad visual
+\geometry{left=2.5cm,right=2.5cm,top=3cm,bottom=3cm}
+\definecolor{rojoUMB}{HTML}{8B0000}
+\hypersetup{colorlinks=true, linkcolor=rojoUMB, urlcolor=blue}
+
+% Encabezado y Pie de página para Blindaje Profesional
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\footnotesize Manual de Usuario - PWA BioGALF}
+\rhead{\footnotesize Confidencial / Uso Profesional}
+\lfoot{\footnotesize © 2026 BioGALF Home Health - Propiedad de Giovanni Lineros.}
+\rfoot{\thepage}
+
+\title{
+    \vspace{-2cm}
+    \textcolor{rojoUMB}{\textbf{MANUAL DE USUARIO E INTERPRETACIÓN CLÍNICA}}\\
+    \large \textit{Plataforma de Soporte a la Decisión para el Manejo del Parkinson}
+}
+\author{\textbf{Arquitectura Tecnológica:} Giovanni Lineros \\ \textbf{Validación de Contenido:} Angie Alejandra Amado Téllez}
+\date{31 de marzo de 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Este manual describe el funcionamiento integral de la PWA diseñada para la evaluación del Parkinson. La herramienta combina la recolección de datos sociodemográficos con una batería clínica de alta precisión, garantizando el almacenamiento seguro de la información y el blindaje legal mediante una declaración de competencia profesional obligatoria.
+\end{abstract}
+
+\section{Seguridad y Control de Acceso Profesional}
+La aplicación incorpora un \textbf{Escudo de Acceso} (Modal de Inicio) que bloquea la interfaz hasta que el usuario acepta formalmente los términos de uso. 
+\begin{itemize}
+    \item \textbf{Advertencia de Uso:} Se restringe el uso exclusivamente a personal de salud acreditado.
+    \item \textbf{Marco Legal:} Al acceder, el profesional declara poseer tarjeta profesional vigente y acepta la responsabilidad bajo la \textbf{Ley 1581 de 2012} de protección de datos en Colombia.
+\end{itemize}
+
+\section{Módulo de Perfil y Estadificación Clínica}
+
+\subsection{Escala de Hoehn y Yahr (Estadios)}
+El evaluador debe clasificar al paciente según su progresión motora:
+\begin{itemize}
+    \item \textbf{Estadio I:} Afectación unilateral, síntomas leves.
+    \item \textbf{Estadio II:} Afectación bilateral sin alteración del equilibrio.
+    \item \textbf{Estadio III:} Inestabilidad postural leve a moderada; independencia física conservada.
+\end{itemize}
+
+\subsection{Contexto Socio-Ambiental}
+Campo dedicado a la identificación de barreras físicas en el hogar y fortalezas de la red de apoyo, fundamental para diseñar intervenciones de \textit{Enriquecimiento Ambiental}.
+
+\section{Guía Operativa de la Batería Clínica}
+
+\subsection{TUG Cognitivo (Dual-Task)}
+\textbf{Operación:} Inicie el cronómetro al levantarse el paciente y deténgalo al sentarse. 
+\textbf{Alerta Automática:} Si el tiempo supera los \textbf{12.6 segundos}, el sistema marcará visualmente un \textbf{Alto Riesgo de Caída}.
+
+\subsection{Escala de Berg (BBS) Dinámica}
+\textbf{Operación:} Califique los 14 ítems (0 a 4). El sistema suma el puntaje total sobre 56 y entrega la interpretación de riesgo (Bajo, Medio o Alto) sin necesidad de cálculos externos.
+
+\subsection{FGA (Functional Gait Assessment)}
+\textbf{Operación:} Evaluación de 10 ítems de marcha funcional. El motor de inferencia identifica patrones específicos de inestabilidad, como dificultades en giros o subida de escaleras.
+
+\section{Simulacro y Gestión de Datos}
+
+\subsection{Fase de Simulacro}
+Módulo diseñado para que el paciente practique las tareas. Su uso es obligatorio para mitigar el efecto de ansiedad y asegurar que los datos recolectados en la batería sean técnicamente válidos.
+
+\subsection{Persistencia en la Nube (Supabase)}
+Al pulsar el botón \textbf{"Guardar Valoración"}, la plataforma sincroniza toda la información con la base de datos de \textit{BioGALF}. Este proceso asegura que el historial clínico y la \textbf{Meta Terapéutica} queden almacenados de forma permanente para el seguimiento longitudinal del paciente.
+
+\section{Propiedad Intelectual y Blindaje}
+Todo el desarrollo, algoritmos de cálculo y estructura de datos son propiedad de \textbf{BioGALF Home Health}. El uso por personal no autorizado está estrictamente prohibido y carece de validez diagnóstica legal.
+
+\end{document}

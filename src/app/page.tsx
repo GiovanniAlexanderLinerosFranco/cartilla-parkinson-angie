@@ -38,6 +38,7 @@ const FGA_ITEMS = [
 ];
 
 export default function CartillaInteractiva() {
+  const [mostrarEscudoAcceso, setMostrarEscudoAcceso] = useState(true);
   const [pruebaSeleccionada, setPruebaSeleccionada] = useState<string | null>(null);
   const [segundos, setSegundos] = useState(2700);
   const [timerActivo, setTimerActivo] = useState(false);
@@ -632,6 +633,29 @@ export default function CartillaInteractiva() {
       <footer className="bg-white border-t p-8 text-center text-slate-400 text-[10px]">
         <p>© 2026 Universidad Manuela Beltrán — Facultad de Ciencias de la Salud</p>
       </footer>
+
+      {mostrarEscudoAcceso && (
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-3xl bg-white border border-red-100 rounded-3xl shadow-2xl p-6 md:p-8 animate-in fade-in zoom-in-95 duration-300">
+            <h2 className="text-red-800 text-xl md:text-2xl font-black mb-4 uppercase tracking-wide">
+              Escudo de Acceso Profesional
+            </h2>
+            <p className="font-bold text-slate-900 text-sm md:text-base leading-relaxed">
+              SISTEMA DE USO RESTRINGIDO. Esta plataforma es una herramienta de soporte a la decisión clínica para uso exclusivo de profesionales de la fisioterapia y salud debidamente acreditados.
+            </p>
+            <p className="mt-4 text-slate-700 text-sm leading-relaxed">
+              Al continuar, usted declara poseer la tarjeta profesional vigente y asume la responsabilidad total sobre la integridad del paciente y la confidencialidad de los datos ingresados bajo las leyes de protección de datos vigentes (Ley 1581 de 2012).
+            </p>
+            <button
+              type="button"
+              onClick={() => setMostrarEscudoAcceso(false)}
+              className="mt-6 w-full md:w-auto px-8 py-4 rounded-xl bg-red-800 text-white text-sm md:text-base font-bold hover:bg-red-900 transition-all duration-300 shadow-lg"
+            >
+              Declaro ser profesional y acepto los términos
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
