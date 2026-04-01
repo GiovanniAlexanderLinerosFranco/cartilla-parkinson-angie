@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { 
-  Activity, ShieldCheck, Gamepad2, ClipboardCheck, 
+  Activity, ShieldCheck, ClipboardCheck, 
   Layers, X, GraduationCap, Play, Pause, RotateCcw, Save
 } from 'lucide-react';
 
@@ -61,8 +61,12 @@ export default function CartillaInteractiva() {
     fga: '',
     updrs: '',
   });
-  const [mostrarPiloto, setMostrarPiloto] = useState(false);
+  const [bpm, setBpm] = useState(60);
+  const [metronomoActivo, setMetronomoActivo] = useState(false);
+  const [pulsoVisual, setPulsoVisual] = useState(false);
   const tugInicioRef = useRef<number | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const intervaloMetronomoRef = useRef<number | null>(null);
 
   useEffect(() => {
     let intervalo: any;
@@ -94,6 +98,80 @@ export default function CartillaInteractiva() {
       }
     };
   }, [tugCorriendo, tugTiempoMs]);
+
+  useEffect(() => {
+    const reproducirPulso = () => {
+      if (typeof window === 'undefined') {
+        return;
+      }
+
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) {
+        return;
+      }
+
+      if (!audioContextRef.current) {
+        audioContextRef.current = new AudioContextClass();
+      }
+
+      const ctx = audioContextRef.current;
+      if (!ctx) {
+        return;
+      }
+
+      if (ctx.state === 'suspended') {
+        void ctx.resume();
+      }
+
+      const now = ctx.currentTime;
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(880, now);
+
+      gainNode.gain.setValueAtTime(0.0001, now);
+      gainNode.gain.exponentialRampToValueAtTime(0.12, now + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      oscillator.start(now);
+      oscillator.stop(now + 0.08);
+
+      setPulsoVisual(true);
+      window.setTimeout(() => setPulsoVisual(false), 120);
+    };
+
+    if (metronomoActivo) {
+      const intervalo = Math.round(60000 / bpm);
+      reproducirPulso();
+      intervaloMetronomoRef.current = window.setInterval(reproducirPulso, intervalo);
+    } else if (intervaloMetronomoRef.current !== null) {
+      window.clearInterval(intervaloMetronomoRef.current);
+      intervaloMetronomoRef.current = null;
+    }
+
+    return () => {
+      if (intervaloMetronomoRef.current !== null) {
+        window.clearInterval(intervaloMetronomoRef.current);
+        intervaloMetronomoRef.current = null;
+      }
+    };
+  }, [metronomoActivo, bpm]);
+
+  useEffect(() => {
+    return () => {
+      if (intervaloMetronomoRef.current !== null) {
+        window.clearInterval(intervaloMetronomoRef.current);
+      }
+      if (audioContextRef.current) {
+        void audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+    };
+  }, []);
 
   const formatearTiempo = (s: number) => {
     const min = Math.floor(s / 60);
@@ -373,19 +451,45 @@ export default function CartillaInteractiva() {
             </div>
           </section>
 
-          {/* Piloto Tecnologías RV */}
+          {/* Estimulación Rítmica Sensorial (Cueing) */}
           <section className="bg-gradient-to-br from-red-700 to-red-900 p-6 rounded-3xl shadow-lg text-white transition-all duration-300 hover:-translate-y-0.5">
             <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <Gamepad2 /> Piloto Tecnologías RV
+              <Layers /> Estimulación Rítmica Sensorial (Cueing)
             </h3>
             <div className="bg-white/10 p-4 rounded-2xl border border-white/20">
-              <h4 className="font-bold text-sm">Entorno: Exergames Inmersivos</h4>
-              <p className="text-xs text-red-100 mt-1">Simulación de marcha con estímulos multisensoriales para potenciar neuroplasticidad.</p>
-              <button 
-                onClick={() => setMostrarPiloto(true)}
-                className="mt-4 w-full py-2 bg-white text-red-800 rounded-xl font-bold text-xs hover:bg-red-50 transition-colors"
+              <p className="text-xs text-red-100">
+                Metrónomo clínico para sincronizar la marcha y favorecer la regularidad del patrón motor.
+              </p>
+
+              <div className="mt-4">
+                <label className="text-xs font-bold uppercase tracking-wide text-red-100">BPM (40-120)</label>
+                <input
+                  type="range"
+                  min={40}
+                  max={120}
+                  value={bpm}
+                  onChange={(event) => setBpm(Number(event.target.value))}
+                  className="mt-2 w-full accent-red-800"
+                />
+                <div className="mt-2 flex items-center justify-between">
+                  <span className="text-[11px] text-red-100">40</span>
+                  <span className="text-2xl font-black text-white">{bpm} BPM</span>
+                  <span className="text-[11px] text-red-100">120</span>
+                </div>
+              </div>
+
+              <div className="mt-4 flex items-center gap-3">
+                <div
+                  className={`h-5 w-5 rounded-full border-2 transition-all duration-100 ${pulsoVisual ? 'bg-white border-white scale-125' : 'bg-red-200 border-red-100'}`}
+                />
+                <span className="text-xs text-red-100">Indicador de pulso sincronizado</span>
+              </div>
+
+              <button
+                onClick={() => setMetronomoActivo((prev) => !prev)}
+                className="mt-5 w-full py-4 bg-red-800 text-white rounded-xl font-extrabold text-sm hover:bg-red-900 transition-colors"
               >
-                Lanzar Simulación Piloto
+                {metronomoActivo ? 'Detener' : 'Iniciar Estimulación'}
               </button>
             </div>
           </section>
@@ -666,36 +770,6 @@ export default function CartillaInteractiva() {
               className="mt-6 w-full md:w-auto px-8 py-4 rounded-xl bg-red-800 text-white text-sm md:text-base font-bold hover:bg-red-900 transition-all duration-300 shadow-lg"
             >
               Declaro ser profesional y acepto los términos
-            </button>
-          </div>
-        </div>
-      )}
-
-      {mostrarPiloto && (
-        <div className="fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-2xl bg-white border border-red-100 rounded-3xl shadow-2xl p-8 animate-in fade-in zoom-in-95 duration-300">
-            <div className="flex justify-between items-start mb-6">
-              <h2 className="text-red-800 text-2xl font-black uppercase tracking-wide">
-                Entorno de Simulación RV en Construcción
-              </h2>
-              <button
-                onClick={() => setMostrarPiloto(false)}
-                className="text-slate-400 hover:text-red-800 transition-colors"
-              >
-                <X size={24} />
-              </button>
-            </div>
-            <div className="bg-red-50 border border-red-100 rounded-2xl p-6 mb-6">
-              <h3 className="text-lg font-bold text-red-800 mb-2">BioGALF</h3>
-              <p className="text-slate-700 text-sm leading-relaxed">
-                Esta herramienta de realidad virtual está en fase de desarrollo. Se esperan funcionalidades avanzadas de biofeedback y gamificación para potenciar la neuroplasticidad en pacientes con Parkinson en fases tempranas.
-              </p>
-            </div>
-            <button
-              onClick={() => setMostrarPiloto(false)}
-              className="w-full px-6 py-3 rounded-xl bg-red-800 text-white font-bold hover:bg-red-900 transition-all duration-300"
-            >
-              Cerrar
             </button>
           </div>
         </div>

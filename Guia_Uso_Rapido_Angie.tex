@@ -1,0 +1,87 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+
+% Configuración de márgenes e identidad visual
+\geometry{left=2.54cm,right=2.54cm,top=2.54cm,bottom=2.54cm}
+\definecolor{rojoUMB}{HTML}{8B0000}
+
+% Configuración de encabezados y pies de página
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\footnotesize Guía de Uso Rápido - Cartilla Interactiva}
+\rhead{\footnotesize BioGALF Home Health}
+\lfoot{\footnotesize Soporte Tecnológico: Giovanni Lineros}
+\rfoot{\thepage}
+
+% Estilo de títulos
+\titleformat{\section}{\color{rojoUMB}\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\color{rojoUMB}\normalfont\large\bfseries}{\thesubsection}{1em}{}
+
+\title{
+    \vspace{-2cm}
+    \textcolor{rojoUMB}{\textbf{INSTRUCTIVO DE USO RÁPIDO (FISIOTERAPIA)}}\\
+    \large \textit{Cartilla Clínica Digital para el Manejo del Parkinson}
+}
+\author{}
+\date{1 de abril de 2026}
+
+\begin{document}
+
+\maketitle
+\vspace{-1.5cm} % Ajuste de espacio
+
+\section{1. Inicio de Sesión y Registro del Paciente}
+\begin{itemize}
+    \item \textbf{Escudo de Acceso Profesional:} Al abrir la aplicación, la pantalla estará bloqueada por seguridad. Lea el aviso legal y pulse el botón \textit{Declaro ser profesional y acepto los términos} para habilitar el sistema.
+    \item \textbf{Perfil del Paciente:} Antes de iniciar la evaluación, diligencie el nombre completo, el Estadio de Hoehn y Yahr (I-III) y la Evaluación Socio-Ambiental (red de apoyo y barreras en el hogar).
+    \item \textit{Recomendación:} Llene este perfil al inicio de la sesión para que el registro clínico quede estructurado desde el primer minuto.
+\end{itemize}
+
+\section{2. Uso de la Batería Clínica (Cálculo Automático)}
+Abra la prueba que necesite desplegando las opciones. \textbf{Usted no necesita calcular ni sumar nada manualmente.}
+
+\subsection*{TUG Cognitivo (Cronómetro Integrado)}
+\begin{itemize}
+    \item Pulse \textbf{Start} al iniciar la prueba y \textbf{Stop} al finalizar (use \textbf{Reset} si requiere repetir).
+    \item La aplicación mostrará el tiempo y la interpretación automática:
+    \begin{itemize}
+        \item Mayor de 12.6 segundos: \textit{Alerta de alto riesgo de caída}.
+        \item Menor o igual a 12.6 segundos: \textit{Riesgo bajo}.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Escala de Berg (BBS)}
+\begin{itemize}
+    \item Verá 14 ítems, cada uno con botones de calificación del 0 al 4.
+    \item Seleccione un valor por ítem. El sistema sumará automáticamente el puntaje total sobre 56 y mostrará el nivel de riesgo en tiempo real.
+\end{itemize}
+
+\subsection*{FGA y UPDRS}
+\begin{itemize}
+    \item \textbf{FGA:} Seleccione el puntaje (0 a 3) en los 10 ítems. La PWA calcula el total y genera un resumen funcional de la marcha.
+    \item \textbf{UPDRS:} Ingrese el resultado en el campo de texto libre o numérico según su criterio.
+\end{itemize}
+
+\section{3. Piloto de Tecnologías RV}
+Esta sección es un apoyo complementario. Al hacer clic en el botón \textbf{Lanzar Simulación Piloto}, se abrirá una ventana emergente indicando que el \textit{"Entorno de Simulación RV en Construcción - BioGALF"} está en desarrollo. Cierre la ventana y continúe con la valoración.
+
+\section{4. Guardado Final de la Valoración en la Nube}
+\begin{itemize}
+    \item \textbf{Regla de Integridad:} El botón \textit{Guardar Valoración} permanecerá bloqueado por defecto. Se habilitará únicamente cuando usted diligencie \textbf{al menos 2 pruebas clínicas} de la batería (Ej. TUG + Berg).
+    \item Una vez habilitado, al guardar, todos los datos se envían a la nube de \textbf{BioGALF} para garantizar la trazabilidad clínica.
+\end{itemize}
+
+\vspace{0.5cm}
+\noindent\fbox{%
+    \parbox{\textwidth}{%
+        \textbf{Nota de Responsabilidad Profesional:} La aplicación automatiza cálculos e interpreta rangos de riesgo basándose en evidencia científica; sin embargo, la validación final y la decisión terapéutica continúan siendo responsabilidad exclusiva del fisioterapeuta tratante.
+    }%
+}
+
+\end{document}
