@@ -61,6 +61,7 @@ export default function CartillaInteractiva() {
     fga: '',
     updrs: '',
   });
+  const [mostrarPiloto, setMostrarPiloto] = useState(false);
   const tugInicioRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -273,26 +274,36 @@ export default function CartillaInteractiva() {
 
     try {
       setGuardando(true);
-      const { error } = await supabase.from('valoraciones_parkinson').insert([
-        {
-          nombre: perfilPaciente.nombre,
-          estadio: perfilPaciente.estadio,
-          evaluacion_socio_ambiental: perfilPaciente.evaluacionSocioAmbiental,
-          tug_cognitivo: resultadosClinicos.tugCognitivo,
-          berg: resultadosClinicos.berg,
-          fga: resultadosClinicos.fga,
-          updrs: resultadosClinicos.updrs,
-          seguimiento_meta_terapeutica: progreso,
-        },
-      ]);
+      const datosValoracion = {
+        nombre_paciente: perfilPaciente.nombre,
+        estadio_parkinson: perfilPaciente.estadio,
+        evaluacion_entorno: perfilPaciente.evaluacionSocioAmbiental,
+        resultado_tug_cognitivo: resultadosClinicos.tugCognitivo,
+        resultado_berg: resultadosClinicos.berg,
+        resultado_fga: resultadosClinicos.fga,
+        resultado_updrs: resultadosClinicos.updrs,
+        observaciones_clinicas: progreso,
+      };
+      
+      console.log('Enviando datos a Supabase:', datosValoracion);
+      
+      const { error } = await supabase.from('valoraciones_parkinson').insert([datosValoracion]);
 
       if (error) {
+        console.error('Error detallado de Supabase:', {
+          message: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint,
+        });
         throw error;
       }
 
+      console.log('Valoración guardada exitosamente');
       alert('La valoración clínica se guardó correctamente.');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'No fue posible guardar la valoración.';
+      console.error('Error completo:', error);
       alert(`Error al guardar la valoración: ${message}`);
     } finally {
       setGuardando(false);
@@ -370,7 +381,10 @@ export default function CartillaInteractiva() {
             <div className="bg-white/10 p-4 rounded-2xl border border-white/20">
               <h4 className="font-bold text-sm">Entorno: Exergames Inmersivos</h4>
               <p className="text-xs text-red-100 mt-1">Simulación de marcha con estímulos multisensoriales para potenciar neuroplasticidad.</p>
-              <button className="mt-4 w-full py-2 bg-white text-red-800 rounded-xl font-bold text-xs hover:bg-red-50 transition-colors">
+              <button 
+                onClick={() => setMostrarPiloto(true)}
+                className="mt-4 w-full py-2 bg-white text-red-800 rounded-xl font-bold text-xs hover:bg-red-50 transition-colors"
+              >
                 Lanzar Simulación Piloto
               </button>
             </div>
@@ -652,6 +666,36 @@ export default function CartillaInteractiva() {
               className="mt-6 w-full md:w-auto px-8 py-4 rounded-xl bg-red-800 text-white text-sm md:text-base font-bold hover:bg-red-900 transition-all duration-300 shadow-lg"
             >
               Declaro ser profesional y acepto los términos
+            </button>
+          </div>
+        </div>
+      )}
+
+      {mostrarPiloto && (
+        <div className="fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-2xl bg-white border border-red-100 rounded-3xl shadow-2xl p-8 animate-in fade-in zoom-in-95 duration-300">
+            <div className="flex justify-between items-start mb-6">
+              <h2 className="text-red-800 text-2xl font-black uppercase tracking-wide">
+                Entorno de Simulación RV en Construcción
+              </h2>
+              <button
+                onClick={() => setMostrarPiloto(false)}
+                className="text-slate-400 hover:text-red-800 transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className="bg-red-50 border border-red-100 rounded-2xl p-6 mb-6">
+              <h3 className="text-lg font-bold text-red-800 mb-2">BioGALF</h3>
+              <p className="text-slate-700 text-sm leading-relaxed">
+                Esta herramienta de realidad virtual está en fase de desarrollo. Se esperan funcionalidades avanzadas de biofeedback y gamificación para potenciar la neuroplasticidad en pacientes con Parkinson en fases tempranas.
+              </p>
+            </div>
+            <button
+              onClick={() => setMostrarPiloto(false)}
+              className="w-full px-6 py-3 rounded-xl bg-red-800 text-white font-bold hover:bg-red-900 transition-all duration-300"
+            >
+              Cerrar
             </button>
           </div>
         </div>
