@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { 
   Activity, ShieldCheck, ClipboardCheck, 
-  Layers, X, GraduationCap, Play, Pause, RotateCcw, Save
+  Layers, X, GraduationCap, Play, Pause, RotateCcw, Save, Download
 } from 'lucide-react';
 
 const BBS_ITEMS = [
@@ -236,8 +236,8 @@ export default function CartillaInteractiva() {
     if (tugSegundos === null) {
       return null;
     }
-    return tugSegundos > 12.6
-      ? '⚠️ ALTO RIESGO DE CAÍDA (Sensibilidad 80%)'
+    return tugSegundos > 11.5
+      ? '⚠️ ALTO RIESGO DE CAÍDA'
       : '✅ Riesgo Bajo';
   }, [tugSegundos]);
 
@@ -245,10 +245,10 @@ export default function CartillaInteractiva() {
     if (bbsItemsCompletos === 0) {
       return 'Sin datos de Berg';
     }
-    if (bbsTotal >= 41 && bbsTotal <= 56) {
+    if (bbsTotal >= 45 && bbsTotal <= 56) {
       return 'Riesgo Bajo';
     }
-    if (bbsTotal >= 21 && bbsTotal <= 40) {
+    if (bbsTotal >= 21 && bbsTotal <= 44) {
       return 'Riesgo Medio (Requiere asistencia)';
     }
     return 'Riesgo Alto (Inminencia de caída)';
@@ -403,6 +403,17 @@ export default function CartillaInteractiva() {
       </header>
 
       <main className="max-w-6xl mx-auto p-6 space-y-8">
+        
+        {/* Recurso descargable (Solicitud de la profesora) */}
+        <div className="flex justify-end">
+          <a 
+            href="/Ejemplos_Intervencion_Clinica.pdf" 
+            download 
+            className="flex items-center gap-2 px-5 py-3 bg-red-800 text-white rounded-xl font-bold text-sm hover:bg-red-900 transition-colors shadow-sm"
+          >
+            <Download size={18} /> Descargar Ejemplos de Sesión Clínica
+          </a>
+        </div>
 
         {/* Fila 1: Perfil y Tecnologías */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -476,6 +487,13 @@ export default function CartillaInteractiva() {
                   <span className="text-2xl font-black text-white">{bpm} BPM</span>
                   <span className="text-[11px] text-red-100">120</span>
                 </div>
+              </div>
+
+              {/* Justificación de Gamificación para la profesora */}
+              <div className="mt-3 p-3 bg-red-950/40 rounded-lg border border-red-800/50">
+                <p className="text-[11px] text-red-50 leading-relaxed">
+                  <span className="font-bold">Gamificación y Doble Tarea:</span> Pida al paciente sincronizar el paso con el estímulo rítmico para crear un entorno de aprendizaje motor y romper el congelamiento de la marcha.
+                </p>
               </div>
 
               <div className="mt-4 flex items-center gap-3">
@@ -635,6 +653,17 @@ export default function CartillaInteractiva() {
               {pruebaSeleccionada === 'TUG' && (
                 <div className="mt-6 bg-red-50 border border-red-100 rounded-2xl p-5 space-y-4 transition-all duration-300">
                   <h4 className="text-red-800 font-bold text-base">TUG Cognitivo con Cronómetro Integrado</h4>
+                  
+                  {/* Valores de referencia para la profesora */}
+                  <div className="bg-white border border-red-200 rounded-lg p-3 my-3">
+                    <p className="text-xs text-red-900">
+                      <span className="font-bold">Punto de corte clínico:</span> Un tiempo superior a 11.5 segundos evidencia alto riesgo de caídas.
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-1 italic">
+                      * La alteración en el conteo regresivo (doble tarea) indica fallos en la automaticidad de la marcha.
+                    </p>
+                  </div>
+
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <span className="text-4xl font-mono font-black text-red-800">{formatearCronometroMs(tugTiempoMs)}</span>
                     <div className="flex gap-2">
@@ -670,7 +699,17 @@ export default function CartillaInteractiva() {
 
               {pruebaSeleccionada === 'BBS' && (
                 <div className="mt-6 bg-red-50 border border-red-100 rounded-2xl p-5 space-y-4 transition-all duration-300">
-                  <h4 className="text-red-800 font-bold text-base">Escala de Berg (BBS) Dinámica</h4>
+                  <div className="flex justify-between items-center">
+                    <h4 className="text-red-800 font-bold text-base">Escala de Berg (BBS) Dinámica</h4>
+                  </div>
+                  
+                  {/* Valores de referencia para la profesora */}
+                  <div className="bg-white border border-red-200 rounded-lg p-3">
+                    <p className="text-xs text-red-900">
+                      <span className="font-bold">Valor de referencia:</span> Una puntuación inferior a 45/56 sugiere riesgo inminente de caídas múltiples y requiere intervención preventiva inmediata.
+                    </p>
+                  </div>
+
                   <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
                     {BBS_ITEMS.map((item, indice) => (
                       <div key={item} className="bg-white rounded-xl border border-red-100 p-3">
