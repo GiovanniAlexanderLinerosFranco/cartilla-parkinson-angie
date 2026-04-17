@@ -37,6 +37,28 @@ const FGA_ITEMS = [
   'Subir y bajar escaleras',
 ];
 
+type NivelRiesgo = 'alto' | 'medio' | 'bajo' | 'neutro';
+type EstadoPrueba = 'No iniciada' | 'Parcial' | 'Completa';
+
+type ValoracionPayload = {
+  nombre_paciente: string;
+  estadio_parkinson: string;
+  evaluacion_entorno: string;
+  resultado_tug_cognitivo: string;
+  resultado_berg: string;
+  resultado_fga: string;
+  resultado_updrs: string;
+  observaciones_clinicas: string;
+};
+
+type ValoracionPendiente = {
+  id: string;
+  payload: ValoracionPayload;
+  createdAt: string;
+};
+
+const OFFLINE_QUEUE_KEY = 'biogalf_valoraciones_pendientes_v1';
+
 export default function CartillaInteractiva() {
   const [mostrarEscudoAcceso, setMostrarEscudoAcceso] = useState(true);
   const [pruebaSeleccionada, setPruebaSeleccionada] = useState<string | null>(null);
@@ -46,7 +68,9 @@ export default function CartillaInteractiva() {
   const [tugTiempoMs, setTugTiempoMs] = useState(0);
   const [tugRegistradoMs, setTugRegistradoMs] = useState<number | null>(null);
   const [progreso, setProgreso] = useState("");
+  const [profesionalResponsable, setProfesionalResponsable] = useState('');
   const [guardando, setGuardando] = useState(false);
+  const [pendientesSincronizar, setPendientesSincronizar] = useState(0);
   const [perfilPaciente, setPerfilPaciente] = useState({
     nombre: '',
     estadio: '',
@@ -173,6 +197,77 @@ export default function CartillaInteractiva() {
     };
   }, []);
 
+  const leerColaLocal = (): ValoracionPendiente[] => {
+    if (typeof window === 'undefined') {
+      return [];
+    }
+    try {
+      const raw = window.localStorage.getItem(OFFLINE_QUEUE_KEY);
+      if (!raw) {
+        return [];
+      }
+      const parsed = JSON.parse(raw) as ValoracionPendiente[];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const escribirColaLocal = (cola: ValoracionPendiente[]) => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    window.localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(cola));
+    setPendientesSincronizar(cola.length);
+  };
+
+  const encolarValoracion = (payload: ValoracionPayload) => {
+    const cola = leerColaLocal();
+    const item: ValoracionPendiente = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      payload,
+      createdAt: new Date().toISOString(),
+    };
+    escribirColaLocal([...cola, item]);
+  };
+
+  const esErrorDeRed = (error: unknown) => {
+    if (!navigator.onLine) {
+      return true;
+    }
+    const msg = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+    return msg.includes('fetch') || msg.includes('network') || msg.includes('failed to fetch');
+  };
+
+  const sincronizarColaLocal = async () => {
+    const cola = leerColaLocal();
+    if (cola.length === 0 || !navigator.onLine) {
+      setPendientesSincronizar(cola.length);
+      return;
+    }
+
+    const pendientes: ValoracionPendiente[] = [];
+
+    for (const item of cola) {
+      const { error } = await supabase.from('valoraciones_parkinson').insert([item.payload]);
+      if (error) {
+        pendientes.push(item);
+      }
+    }
+
+    escribirColaLocal(pendientes);
+  };
+
+  useEffect(() => {
+    setPendientesSincronizar(leerColaLocal().length);
+    const onOnline = () => {
+      void sincronizarColaLocal();
+    };
+    window.addEventListener('online', onOnline);
+    void sincronizarColaLocal();
+    return () => window.removeEventListener('online', onOnline);
+  }, []);
+
   const formatearTiempo = (s: number) => {
     const min = Math.floor(s / 60);
     const seg = s % 60;
@@ -270,6 +365,19 @@ export default function CartillaInteractiva() {
     return 'Marcha estable';
   }, [fgaItemsCompletos, puntajesFga]);
 
+  const interpretacionFgaRiesgo = useMemo(() => {
+    if (fgaItemsCompletos === 0) {
+      return 'Sin datos de riesgo';
+    }
+    if (fgaTotal <= 15) {
+      return 'Riesgo Alto';
+    }
+    if (fgaTotal <= 22) {
+      return 'Riesgo Medio';
+    }
+    return 'Riesgo Bajo';
+  }, [fgaItemsCompletos, fgaTotal]);
+
   const pruebasConDatos = useMemo(() => {
     let total = 0;
     if (tugRegistradoMs !== null) total += 1;
@@ -278,6 +386,96 @@ export default function CartillaInteractiva() {
     if (updrs.trim() !== '') total += 1;
     return total;
   }, [tugRegistradoMs, bbsItemsCompletos, fgaItemsCompletos, updrs]);
+
+  const estadoTug = useMemo<EstadoPrueba>(() => {
+    if (tugCorriendo) {
+      return 'Parcial';
+    }
+    if (tugRegistradoMs !== null) {
+      return 'Completa';
+    }
+    return 'No iniciada';
+  }, [tugCorriendo, tugRegistradoMs]);
+
+  const estadoBbs = useMemo<EstadoPrueba>(() => {
+    if (bbsItemsCompletos === 0) {
+      return 'No iniciada';
+    }
+    if (bbsItemsCompletos < BBS_ITEMS.length) {
+      return 'Parcial';
+    }
+    return 'Completa';
+  }, [bbsItemsCompletos]);
+
+  const estadoFga = useMemo<EstadoPrueba>(() => {
+    if (fgaItemsCompletos === 0) {
+      return 'No iniciada';
+    }
+    if (fgaItemsCompletos < FGA_ITEMS.length) {
+      return 'Parcial';
+    }
+    return 'Completa';
+  }, [fgaItemsCompletos]);
+
+  const estadoUpdrs = useMemo<EstadoPrueba>(() => {
+    if (updrs.trim() === '') {
+      return 'No iniciada';
+    }
+    return 'Completa';
+  }, [updrs]);
+
+  const nivelRiesgoTug = useMemo<NivelRiesgo>(() => {
+    if (tugSegundos === null) {
+      return 'neutro';
+    }
+    return tugSegundos > 11.5 ? 'alto' : 'bajo';
+  }, [tugSegundos]);
+
+  const nivelRiesgoBbs = useMemo<NivelRiesgo>(() => {
+    if (bbsItemsCompletos === 0) {
+      return 'neutro';
+    }
+    if (bbsTotal >= 45) {
+      return 'bajo';
+    }
+    if (bbsTotal >= 21) {
+      return 'medio';
+    }
+    return 'alto';
+  }, [bbsItemsCompletos, bbsTotal]);
+
+  const nivelRiesgoFga = useMemo<NivelRiesgo>(() => {
+    if (fgaItemsCompletos === 0) {
+      return 'neutro';
+    }
+    if (fgaTotal <= 15) {
+      return 'alto';
+    }
+    if (fgaTotal <= 22) {
+      return 'medio';
+    }
+    return 'bajo';
+  }, [fgaItemsCompletos, fgaTotal]);
+
+  const claseSemaforo = (nivel: NivelRiesgo) => {
+    if (nivel === 'alto') return 'text-red-800 bg-red-100 border border-red-200';
+    if (nivel === 'medio') return 'text-amber-800 bg-amber-100 border border-amber-200';
+    if (nivel === 'bajo') return 'text-emerald-800 bg-emerald-100 border border-emerald-200';
+    return 'text-slate-600 bg-slate-100 border border-slate-200';
+  };
+
+  const claseEstadoPrueba = (estado: EstadoPrueba) => {
+    if (estado === 'Completa') return 'text-emerald-800 bg-emerald-100 border border-emerald-200';
+    if (estado === 'Parcial') return 'text-amber-800 bg-amber-100 border border-amber-200';
+    return 'text-slate-600 bg-slate-100 border border-slate-200';
+  };
+
+  const construirObservacionesClinicas = () => {
+    const fecha = new Date().toLocaleString('es-CO');
+    const profesional = profesionalResponsable.trim() || 'No especificado';
+    const observacionBase = progreso.trim() || 'Sin observaciones adicionales.';
+    return `[Registro: ${fecha}] [Profesional: ${profesional}] ${observacionBase}`;
+  };
 
   useEffect(() => {
     setResultadosClinicos((prev) => ({
@@ -292,7 +490,7 @@ export default function CartillaInteractiva() {
           : '',
       fga:
         fgaItemsCompletos > 0
-          ? `${fgaTotal}/30 | ${resumenFga}`
+          ? `${fgaTotal}/30 | ${resumenFga} | ${interpretacionFgaRiesgo}`
           : '',
       updrs: updrs.trim(),
     }));
@@ -305,6 +503,7 @@ export default function CartillaInteractiva() {
     fgaItemsCompletos,
     fgaTotal,
     resumenFga,
+    interpretacionFgaRiesgo,
     updrs,
   ]);
 
@@ -352,7 +551,7 @@ export default function CartillaInteractiva() {
 
     try {
       setGuardando(true);
-      const datosValoracion = {
+      const datosValoracion: ValoracionPayload = {
         nombre_paciente: perfilPaciente.nombre,
         estadio_parkinson: perfilPaciente.estadio,
         evaluacion_entorno: perfilPaciente.evaluacionSocioAmbiental,
@@ -360,8 +559,14 @@ export default function CartillaInteractiva() {
         resultado_berg: resultadosClinicos.berg,
         resultado_fga: resultadosClinicos.fga,
         resultado_updrs: resultadosClinicos.updrs,
-        observaciones_clinicas: progreso,
+        observaciones_clinicas: construirObservacionesClinicas(),
       };
+
+      if (!navigator.onLine) {
+        encolarValoracion(datosValoracion);
+        alert('Sin conexión. La valoración se guardó localmente y se sincronizará al reconectar.');
+        return;
+      }
       
       console.log('Enviando datos a Supabase:', datosValoracion);
       
@@ -378,8 +583,24 @@ export default function CartillaInteractiva() {
       }
 
       console.log('Valoración guardada exitosamente');
+      await sincronizarColaLocal();
       alert('La valoración clínica se guardó correctamente.');
     } catch (error) {
+      if (esErrorDeRed(error)) {
+        const datosValoracion: ValoracionPayload = {
+          nombre_paciente: perfilPaciente.nombre,
+          estadio_parkinson: perfilPaciente.estadio,
+          evaluacion_entorno: perfilPaciente.evaluacionSocioAmbiental,
+          resultado_tug_cognitivo: resultadosClinicos.tugCognitivo,
+          resultado_berg: resultadosClinicos.berg,
+          resultado_fga: resultadosClinicos.fga,
+          resultado_updrs: resultadosClinicos.updrs,
+          observaciones_clinicas: construirObservacionesClinicas(),
+        };
+        encolarValoracion(datosValoracion);
+        alert('Conexión inestable. La valoración se guardó localmente y se sincronizará automáticamente.');
+        return;
+      }
       const message = error instanceof Error ? error.message : 'No fue posible guardar la valoración.';
       console.error('Error completo:', error);
       alert(`Error al guardar la valoración: ${message}`);
@@ -398,7 +619,7 @@ export default function CartillaInteractiva() {
             <span className="font-bold tracking-widest uppercase text-[10px]">Universidad Manuela Beltrán</span>
           </div>
           <h1 className="text-3xl font-extrabold text-red-800">Prevención de Caídas en Parkinson</h1>
-          <p className="text-slate-500 italic text-sm mt-2">"Diseño y validación de herramienta RV" — Angie Alejandra Amado Téllez</p>
+          <p className="text-slate-500 italic text-sm mt-2">"Diseño y validación de herramienta digital" — Angie Alejandra Amado Téllez</p>
         </div>
       </header>
 
@@ -415,168 +636,59 @@ export default function CartillaInteractiva() {
           </a>
         </div>
 
-        {/* Fila 1: Perfil y Tecnologías */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Formulario Perfil del Paciente */}
-          <section className="bg-white p-6 rounded-3xl shadow-sm border border-red-100 transition-all duration-300 hover:shadow-lg">
-            <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-red-800">
-              <ShieldCheck /> Perfil del Paciente
-            </h3>
-            <div className="space-y-3">
-              <input
-                type="text"
-                name="nombre"
-                value={perfilPaciente.nombre}
-                onChange={handlePerfilChange}
-                placeholder="Nombre Completo"
-                className="w-full p-2 border rounded-lg text-sm border-red-100 focus:border-red-800 focus:outline-none"
-              />
-              <div className="grid grid-cols-2 gap-2">
-                <select
-                  name="estadio"
-                  value={perfilPaciente.estadio}
-                  onChange={handlePerfilChange}
-                  className="p-2 border rounded-lg text-sm border-red-100 focus:border-red-800 focus:outline-none"
-                >
-                  <option value="">Estadio Hoehn y Yahr (I-III)</option>
-                  <option value="Estadio I">Estadio I</option>
-                  <option value="Estadio II">Estadio II</option>
-                  <option value="Estadio III">Estadio III</option>
-                </select>
-                <input type="number" placeholder="Puntaje MMSE" className="p-2 border rounded-lg text-sm border-red-100 focus:border-red-800 focus:outline-none" />
-              </div>
-              <div className="col-span-2">
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
-                  Evaluación Socio-Ambiental (Red de Apoyo / Barreras en Hogar)
-                </label>
-                <input
-                  type="text"
-                  name="evaluacionSocioAmbiental"
-                  value={perfilPaciente.evaluacionSocioAmbiental}
-                  onChange={handlePerfilChange}
-                  placeholder="Describa la red de apoyo y barreras identificadas en el entorno del paciente"
-                  className="w-full p-2 border rounded-lg text-sm border-red-100 focus:border-red-800 focus:outline-none"
-                />
-              </div>
-              <p className="text-[10px] text-slate-400">Requisito: Estadios I-III y MMSE ≥ 24.</p>
-            </div>
-          </section>
-
-          {/* Estimulación Rítmica Sensorial (Cueing) */}
-          <section className="bg-gradient-to-br from-red-700 to-red-900 p-6 rounded-3xl shadow-lg text-white transition-all duration-300 hover:-translate-y-0.5">
-            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <Layers /> Estimulación Rítmica Sensorial (Cueing)
-            </h3>
-            <div className="bg-white/10 p-4 rounded-2xl border border-white/20">
-              <p className="text-xs text-red-100">
-                Metrónomo clínico para sincronizar la marcha y favorecer la regularidad del patrón motor.
-              </p>
-
-              <div className="mt-4">
-                <label className="text-xs font-bold uppercase tracking-wide text-red-100">BPM (40-120)</label>
-                <input
-                  type="range"
-                  min={40}
-                  max={120}
-                  value={bpm}
-                  onChange={(event) => setBpm(Number(event.target.value))}
-                  className="mt-2 w-full accent-red-800"
-                />
-                <div className="mt-2 flex items-center justify-between">
-                  <span className="text-[11px] text-red-100">40</span>
-                  <span className="text-2xl font-black text-white">{bpm} BPM</span>
-                  <span className="text-[11px] text-red-100">120</span>
-                </div>
-              </div>
-
-              {/* Justificación de Gamificación para la profesora */}
-              <div className="mt-3 p-3 bg-red-950/40 rounded-lg border border-red-800/50">
-                <p className="text-[11px] text-red-50 leading-relaxed">
-                  <span className="font-bold">Gamificación y Doble Tarea:</span> Pida al paciente sincronizar el paso con el estímulo rítmico para crear un entorno de aprendizaje motor y romper el congelamiento de la marcha.
-                </p>
-              </div>
-
-              <div className="mt-4 flex items-center gap-3">
-                <div
-                  className={`h-5 w-5 rounded-full border-2 transition-all duration-100 ${pulsoVisual ? 'bg-white border-white scale-125' : 'bg-red-200 border-red-100'}`}
-                />
-                <span className="text-xs text-red-100">Indicador de pulso sincronizado</span>
-              </div>
-
-              <button
-                onClick={() => setMetronomoActivo((prev) => !prev)}
-                className="mt-5 w-full py-4 bg-red-800 text-white rounded-xl font-extrabold text-sm hover:bg-red-900 transition-colors"
-              >
-                {metronomoActivo ? 'Detener' : 'Iniciar Estimulación'}
-              </button>
-            </div>
-          </section>
-        </div>
-
-        {/* Fila 2: Seguimiento Meta Terapéutica */}
+        {/* 1) Perfil clínico */}
         <section className="bg-white p-6 rounded-3xl shadow-sm border border-red-100 transition-all duration-300 hover:shadow-lg">
           <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-red-800">
-            <Activity /> Seguimiento Meta Terapéutica
+            <ShieldCheck /> Perfil del Paciente
           </h3>
-          <div className="flex gap-4">
-            <textarea
-              value={progreso}
-              onChange={(e) => setProgreso(e.target.value)}
-              placeholder="Registro diario del progreso del paciente..."
-              className="flex-1 p-3 border rounded-xl text-sm h-24 border-red-100 focus:border-red-800 focus:outline-none"
+          <div className="space-y-3">
+            <input
+              type="text"
+              name="nombre"
+              value={perfilPaciente.nombre}
+              onChange={handlePerfilChange}
+              placeholder="Nombre Completo"
+              className="w-full p-2 border rounded-lg text-sm border-red-100 focus:border-red-800 focus:outline-none"
             />
-            <button
-              onClick={handleGuardar}
-              disabled={guardando || pruebasConDatos < 2}
-              className="min-w-40 bg-red-800 text-white p-4 rounded-xl flex flex-col items-center justify-center text-sm font-bold hover:bg-red-900 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              <Save size={20} />
-              <span className="text-[10px] font-bold mt-1 uppercase">
-                {guardando ? 'Guardando...' : 'Guardar Valoración'}
-              </span>
-            </button>
-          </div>
-          <p className="mt-2 text-xs text-slate-500">
-            Integridad clínica: completa al menos 2 pruebas de batería para habilitar el guardado ({pruebasConDatos}/4).
-          </p>
-        </section>
-
-        {/* Fila 3: Protocolo con Timer */}
-        <section className="bg-slate-900 text-white rounded-[40px] p-8 relative overflow-hidden transition-all duration-300">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-            <h2 className="text-2xl font-bold flex items-center gap-3">
-              <Layers className="text-red-400" /> Monitoreo de Sesión
-            </h2>
-            <div className="bg-white/10 px-6 py-3 rounded-2xl border border-white/20 flex items-center gap-6">
-              <span className="text-3xl font-mono font-bold text-red-400">{formatearTiempo(segundos)}</span>
-              <div className="flex gap-2">
-                <button onClick={() => setTimerActivo(!timerActivo)} className="p-2 bg-red-800 rounded-full">
-                  {timerActivo ? <Pause size={18} /> : <Play size={18} />}
-                </button>
-                <button onClick={() => { setSegundos(2700); setTimerActivo(false); }} className="p-2 bg-slate-700 rounded-full">
-                  <RotateCcw size={18} />
-                </button>
-              </div>
+            <div className="grid grid-cols-2 gap-2">
+              <select
+                name="estadio"
+                value={perfilPaciente.estadio}
+                onChange={handlePerfilChange}
+                className="p-2 border rounded-lg text-sm border-red-100 focus:border-red-800 focus:outline-none"
+              >
+                <option value="">Estadio Hoehn y Yahr (I-III)</option>
+                <option value="Estadio I">Estadio I</option>
+                <option value="Estadio II">Estadio II</option>
+                <option value="Estadio III">Estadio III</option>
+              </select>
+              <input type="number" placeholder="Puntaje MMSE" className="p-2 border rounded-lg text-sm border-red-100 focus:border-red-800 focus:outline-none" />
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className={`p-4 rounded-2xl border ${segundos > 2400 ? 'bg-red-800 border-white' : 'bg-white/5 border-white/10 opacity-50'}`}>
-              <h4 className="font-bold text-xs uppercase">1. Calentamiento (5 min)</h4>
-              <p className="text-[10px] text-red-100">Movilidad y respiración consciente.</p>
+            <input
+              type="text"
+              value={profesionalResponsable}
+              onChange={(event) => setProfesionalResponsable(event.target.value)}
+              placeholder="Profesional responsable"
+              className="w-full p-2 border rounded-lg text-sm border-red-100 focus:border-red-800 focus:outline-none"
+            />
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
+                Evaluación Socio-Ambiental (Red de Apoyo / Barreras en Hogar)
+              </label>
+              <input
+                type="text"
+                name="evaluacionSocioAmbiental"
+                value={perfilPaciente.evaluacionSocioAmbiental}
+                onChange={handlePerfilChange}
+                placeholder="Describa la red de apoyo y barreras identificadas en el entorno del paciente"
+                className="w-full p-2 border rounded-lg text-sm border-red-100 focus:border-red-800 focus:outline-none"
+              />
             </div>
-            <div className={`p-4 rounded-2xl border ${segundos <= 2400 && segundos > 600 ? 'bg-red-800 border-white' : 'bg-white/5 border-white/10 opacity-50'}`}>
-              <h4 className="font-bold text-xs uppercase">2. Intervención RV (30 min)</h4>
-              <p className="text-[10px] text-red-100">Estímulos multisensoriales.</p>
-            </div>
-            <div className={`p-4 rounded-2xl border ${segundos <= 600 && segundos > 0 ? 'bg-red-800 border-white' : 'bg-white/5 border-white/10 opacity-50'}`}>
-              <h4 className="font-bold text-xs uppercase">3. Enfriamiento (10 min)</h4>
-              <p className="text-[10px] text-red-100">Estiramientos y feedback.</p>
-            </div>
+            <p className="text-[10px] text-slate-400">Requisito: Estadios I-III y MMSE ≥ 24.</p>
           </div>
         </section>
 
-        {/* Batería de Evaluación Clínica Interactiva */}
+        {/* 2) Batería clínica */}
         <section className="space-y-6">
           <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
             <ClipboardCheck className="text-red-800" /> Batería de Evaluación Clínica
@@ -600,36 +712,47 @@ export default function CartillaInteractiva() {
             ))}
           </div>
 
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="bg-white border border-red-100 rounded-2xl p-4 transition-all duration-300">
-              <label className="block text-xs font-bold uppercase tracking-wide text-red-800 mb-2">
-                Resultado TUG Cognitivo
-              </label>
-              <p className="text-sm text-slate-700">{resultadosClinicos.tugCognitivo || 'Sin registrar'}</p>
+              <div className="flex items-center justify-between mb-1 gap-2">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Resultado TUG</p>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${claseEstadoPrueba(estadoTug)}`}>{estadoTug}</span>
+              </div>
+              <p className="text-xl font-black text-slate-800">
+                {tugRegistradoMs !== null ? `${(tugRegistradoMs / 1000).toFixed(2)} s` : '--'}
+              </p>
+              <span className={`inline-flex mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${claseSemaforo(nivelRiesgoTug)}`}>{riesgoTug || 'Sin datos de riesgo'}</span>
             </div>
             <div className="bg-white border border-red-100 rounded-2xl p-4 transition-all duration-300">
-              <label className="block text-xs font-bold uppercase tracking-wide text-red-800 mb-2">
-                Resultado Berg
-              </label>
-              <p className="text-sm text-slate-700">{resultadosClinicos.berg || 'Sin registrar'}</p>
+              <div className="flex items-center justify-between mb-1 gap-2">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Resultado Berg</p>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${claseEstadoPrueba(estadoBbs)}`}>{estadoBbs}</span>
+              </div>
+              <p className="text-xl font-black text-slate-800">{bbsItemsCompletos > 0 ? `${bbsTotal}/56` : '--'}</p>
+              <div className="flex justify-between items-center mt-1">
+                <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold ${claseSemaforo(nivelRiesgoBbs)}`}>{interpretacionBbs}</span>
+                <p className="text-[10px] text-slate-400">{bbsItemsCompletos}/14 ítems</p>
+              </div>
             </div>
             <div className="bg-white border border-red-100 rounded-2xl p-4 transition-all duration-300">
-              <label className="block text-xs font-bold uppercase tracking-wide text-red-800 mb-2">
-                Resultado FGA
-              </label>
-              <p className="text-sm text-slate-700">{resultadosClinicos.fga || 'Sin registrar'}</p>
+              <div className="flex items-center justify-between mb-1 gap-2">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Resultado FGA</p>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${claseEstadoPrueba(estadoFga)}`}>{estadoFga}</span>
+              </div>
+              <p className="text-xl font-black text-slate-800">{fgaItemsCompletos > 0 ? `${fgaTotal}/30` : '--'}</p>
+              <div className="flex justify-between items-center mt-1">
+                <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold ${claseSemaforo(nivelRiesgoFga)}`}>{interpretacionFgaRiesgo}</span>
+                <p className="text-[10px] text-slate-400">{fgaItemsCompletos}/10 ítems</p>
+              </div>
+              <p className="text-[11px] text-slate-600 mt-1">{resumenFga}</p>
             </div>
             <div className="bg-white border border-red-100 rounded-2xl p-4 transition-all duration-300">
-              <label className="block text-xs font-bold uppercase tracking-wide text-red-800 mb-2">
-                Resultado UPDRS
-              </label>
-              <input
-                type="text"
-                value={updrs}
-                onChange={(event) => setUpdrs(event.target.value)}
-                placeholder="Ej. 22 puntos"
-                className="w-full p-3 border rounded-xl text-sm border-red-100 focus:border-red-800 focus:outline-none"
-              />
+              <div className="flex items-center justify-between mb-1 gap-2">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Resultado UPDRS</p>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${claseEstadoPrueba(estadoUpdrs)}`}>{estadoUpdrs}</span>
+              </div>
+              <p className="text-sm font-semibold text-slate-700 truncate">{updrs.trim() || 'Sin registrar'}</p>
+              <p className="text-[10px] text-slate-400 mt-1">Capture en la herramienta UPDRS.</p>
             </div>
           </div>
 
@@ -653,8 +776,6 @@ export default function CartillaInteractiva() {
               {pruebaSeleccionada === 'TUG' && (
                 <div className="mt-6 bg-red-50 border border-red-100 rounded-2xl p-5 space-y-4 transition-all duration-300">
                   <h4 className="text-red-800 font-bold text-base">TUG Cognitivo con Cronómetro Integrado</h4>
-                  
-                  {/* Valores de referencia para la profesora */}
                   <div className="bg-white border border-red-200 rounded-lg p-3 my-3">
                     <p className="text-xs text-red-900">
                       <span className="font-bold">Punto de corte clínico:</span> Un tiempo superior a 11.5 segundos evidencia alto riesgo de caídas.
@@ -663,7 +784,6 @@ export default function CartillaInteractiva() {
                       * La alteración en el conteo regresivo (doble tarea) indica fallos en la automaticidad de la marcha.
                     </p>
                   </div>
-
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <span className="text-4xl font-mono font-black text-red-800">{formatearCronometroMs(tugTiempoMs)}</span>
                     <div className="flex gap-2">
@@ -702,14 +822,11 @@ export default function CartillaInteractiva() {
                   <div className="flex justify-between items-center">
                     <h4 className="text-red-800 font-bold text-base">Escala de Berg (BBS) Dinámica</h4>
                   </div>
-                  
-                  {/* Valores de referencia para la profesora */}
                   <div className="bg-white border border-red-200 rounded-lg p-3">
                     <p className="text-xs text-red-900">
                       <span className="font-bold">Valor de referencia:</span> Una puntuación inferior a 45/56 sugiere riesgo inminente de caídas múltiples y requiere intervención preventiva inmediata.
                     </p>
                   </div>
-
                   <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
                     {BBS_ITEMS.map((item, indice) => (
                       <div key={item} className="bg-white rounded-xl border border-red-100 p-3">
@@ -758,8 +875,9 @@ export default function CartillaInteractiva() {
                   </div>
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 bg-white border border-red-100 rounded-xl p-3">
                     <p className="font-bold text-red-800">Score total: {fgaTotal}/30</p>
-                    <span className="text-xs font-bold text-slate-600">Resumen: {resumenFga}</span>
+                    <span className={`text-xs font-bold px-2 py-1 rounded-full ${claseSemaforo(nivelRiesgoFga)}`}>{interpretacionFgaRiesgo}</span>
                   </div>
+                  <p className="text-xs text-slate-600">Resumen funcional: {resumenFga}</p>
                 </div>
               )}
 
@@ -777,6 +895,129 @@ export default function CartillaInteractiva() {
               )}
             </div>
           )}
+        </section>
+
+        {/* 3) Estimulación rítmica */}
+        <section className="bg-gradient-to-br from-red-700 to-red-900 p-6 rounded-3xl shadow-lg text-white transition-all duration-300 hover:-translate-y-0.5">
+          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Layers /> Estimulación Rítmica Sensorial (Cueing)
+          </h3>
+          <div className="bg-white/10 p-4 rounded-2xl border border-white/20">
+            <p className="text-xs text-red-100">
+              Metrónomo clínico para sincronizar la marcha y favorecer la regularidad del patrón motor.
+            </p>
+
+            <div className="mt-4">
+              <label className="text-xs font-bold uppercase tracking-wide text-red-100">BPM (40-120)</label>
+              <input
+                type="range"
+                min={40}
+                max={120}
+                value={bpm}
+                onChange={(event) => setBpm(Number(event.target.value))}
+                className="mt-2 w-full accent-red-800"
+              />
+              <div className="mt-2 flex items-center justify-between">
+                <span className="text-[11px] text-red-100">40</span>
+                <span className="text-2xl font-black text-white">{bpm} BPM</span>
+                <span className="text-[11px] text-red-100">120</span>
+              </div>
+            </div>
+
+            <div className="mt-3 p-3 bg-red-950/40 rounded-lg border border-red-800/50">
+              <p className="text-[11px] text-red-50 leading-relaxed">
+                <span className="font-bold">Gamificación y Doble Tarea:</span> Pida al paciente sincronizar el paso con el estímulo rítmico para crear un entorno de aprendizaje motor y romper el congelamiento de la marcha.
+              </p>
+            </div>
+
+            <div className="mt-4 flex items-center gap-3">
+              <div
+                className={`h-5 w-5 rounded-full border-2 transition-all duration-100 ${pulsoVisual ? 'bg-white border-white scale-125' : 'bg-red-200 border-red-100'}`}
+              />
+              <span className="text-xs text-red-100">Indicador de pulso sincronizado</span>
+            </div>
+
+            <button
+              onClick={() => setMetronomoActivo((prev) => !prev)}
+              className="mt-5 w-full py-4 bg-red-800 text-white rounded-xl font-extrabold text-sm hover:bg-red-900 transition-colors"
+            >
+              {metronomoActivo ? 'Detener' : 'Iniciar Estimulación'}
+            </button>
+          </div>
+        </section>
+
+        {/* 4) Monitoreo de sesión */}
+        <section className="bg-slate-900 text-white rounded-[40px] p-8 relative overflow-hidden transition-all duration-300">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <h2 className="text-2xl font-bold flex items-center gap-3">
+              <Layers className="text-red-400" /> Monitoreo de Sesión
+            </h2>
+            <div className="bg-white/10 px-6 py-3 rounded-2xl border border-white/20 flex items-center gap-6">
+              <span className="text-3xl font-mono font-bold text-red-400">{formatearTiempo(segundos)}</span>
+              <div className="flex gap-2">
+                <button onClick={() => setTimerActivo(!timerActivo)} className="p-2 bg-red-800 rounded-full">
+                  {timerActivo ? <Pause size={18} /> : <Play size={18} />}
+                </button>
+                <button onClick={() => { setSegundos(2700); setTimerActivo(false); }} className="p-2 bg-slate-700 rounded-full">
+                  <RotateCcw size={18} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className={`p-4 rounded-2xl border ${segundos > 2400 ? 'bg-red-800 border-white' : 'bg-white/5 border-white/10 opacity-50'}`}>
+              <h4 className="font-bold text-xs uppercase">1. Calentamiento (5 min)</h4>
+              <p className="text-[10px] text-red-100">Movilidad y respiración consciente.</p>
+            </div>
+            <div className={`p-4 rounded-2xl border ${segundos <= 2400 && segundos > 600 ? 'bg-red-800 border-white' : 'bg-white/5 border-white/10 opacity-50'}`}>
+              <h4 className="font-bold text-xs uppercase">2. Intervención Digital (30 min)</h4>
+              <p className="text-[10px] text-red-100">Estímulos multisensoriales.</p>
+            </div>
+            <div className={`p-4 rounded-2xl border ${segundos <= 600 && segundos > 0 ? 'bg-red-800 border-white' : 'bg-white/5 border-white/10 opacity-50'}`}>
+              <h4 className="font-bold text-xs uppercase">3. Enfriamiento (10 min)</h4>
+              <p className="text-[10px] text-red-100">Estiramientos y feedback.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* 5) Cierre y guardado */}
+        <section className="bg-white p-6 rounded-3xl shadow-sm border border-red-100 transition-all duration-300 hover:shadow-lg">
+          <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-red-800">
+            <Activity /> Seguimiento Meta Terapéutica
+          </h3>
+          {pendientesSincronizar > 0 && (
+            <p className="mb-3 text-xs text-amber-800 bg-amber-100 border border-amber-200 rounded-lg px-3 py-2">
+              Hay {pendientesSincronizar} valoración(es) pendiente(s) de sincronización con la nube.
+            </p>
+          )}
+          <div className="mb-4 grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px]">
+            <div className={`px-3 py-2 rounded-lg font-semibold ${claseEstadoPrueba(estadoTug)}`}>TUG: {estadoTug}</div>
+            <div className={`px-3 py-2 rounded-lg font-semibold ${claseEstadoPrueba(estadoBbs)}`}>BBS: {estadoBbs}</div>
+            <div className={`px-3 py-2 rounded-lg font-semibold ${claseEstadoPrueba(estadoFga)}`}>FGA: {estadoFga}</div>
+            <div className={`px-3 py-2 rounded-lg font-semibold ${claseEstadoPrueba(estadoUpdrs)}`}>UPDRS: {estadoUpdrs}</div>
+          </div>
+          <div className="flex gap-4">
+            <textarea
+              value={progreso}
+              onChange={(e) => setProgreso(e.target.value)}
+              placeholder="Registro diario del progreso del paciente..."
+              className="flex-1 p-3 border rounded-xl text-sm h-24 border-red-100 focus:border-red-800 focus:outline-none"
+            />
+            <button
+              onClick={handleGuardar}
+              disabled={guardando || pruebasConDatos < 2}
+              className="min-w-40 bg-red-800 text-white p-4 rounded-xl flex flex-col items-center justify-center text-sm font-bold hover:bg-red-900 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <Save size={20} />
+              <span className="text-[10px] font-bold mt-1 uppercase">
+                {guardando ? 'Guardando...' : 'Guardar Valoración'}
+              </span>
+            </button>
+          </div>
+          <p className="mt-2 text-xs text-slate-500">
+            Integridad clínica: completa al menos 2 pruebas de batería para habilitar el guardado ({pruebasConDatos}/4).
+          </p>
         </section>
 
         {/* Escudo Legal */}
