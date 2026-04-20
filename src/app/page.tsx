@@ -58,6 +58,7 @@ type ValoracionPendiente = {
 };
 
 const OFFLINE_QUEUE_KEY = 'biogalf_valoraciones_pendientes_v1';
+const MAX_PENDING_PREVIEW = 3;
 
 export default function CartillaInteractiva() {
   const [mostrarEscudoAcceso, setMostrarEscudoAcceso] = useState(true);
@@ -70,7 +71,10 @@ export default function CartillaInteractiva() {
   const [progreso, setProgreso] = useState("");
   const [profesionalResponsable, setProfesionalResponsable] = useState('');
   const [guardando, setGuardando] = useState(false);
+  const [sincronizandoPendientes, setSincronizandoPendientes] = useState(false);
   const [pendientesSincronizar, setPendientesSincronizar] = useState(0);
+  const [pendientesPreview, setPendientesPreview] = useState<ValoracionPendiente[]>([]);
+  const [estadoSincronizacion, setEstadoSincronizacion] = useState<{ tipo: 'ok' | 'warning'; mensaje: string } | null>(null);
   const [perfilPaciente, setPerfilPaciente] = useState({
     nombre: '',
     estadio: '',
@@ -219,6 +223,7 @@ export default function CartillaInteractiva() {
     }
     window.localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(cola));
     setPendientesSincronizar(cola.length);
+    setPendientesPreview(cola.slice(-MAX_PENDING_PREVIEW).reverse());
   };
 
   const encolarValoracion = (payload: ValoracionPayload) => {
@@ -239,27 +244,48 @@ export default function CartillaInteractiva() {
     return msg.includes('fetch') || msg.includes('network') || msg.includes('failed to fetch');
   };
 
-  const sincronizarColaLocal = async () => {
+  const sincronizarColaLocal = async (manual = false) => {
     const cola = leerColaLocal();
     if (cola.length === 0 || !navigator.onLine) {
       setPendientesSincronizar(cola.length);
+      setPendientesPreview(cola.slice(-MAX_PENDING_PREVIEW).reverse());
+      if (manual && cola.length === 0) {
+        setEstadoSincronizacion({ tipo: 'ok', mensaje: 'No hay valoraciones pendientes por sincronizar.' });
+      }
+      if (manual && cola.length > 0 && !navigator.onLine) {
+        setEstadoSincronizacion({ tipo: 'warning', mensaje: 'Sin conexión a internet. No fue posible sincronizar.' });
+      }
       return;
     }
 
+    setSincronizandoPendientes(true);
     const pendientes: ValoracionPendiente[] = [];
+    let exitosas = 0;
 
     for (const item of cola) {
       const { error } = await supabase.from('valoraciones_parkinson').insert([item.payload]);
       if (error) {
         pendientes.push(item);
+      } else {
+        exitosas += 1;
       }
     }
 
     escribirColaLocal(pendientes);
+    if (manual || exitosas > 0) {
+      if (pendientes.length === 0) {
+        setEstadoSincronizacion({ tipo: 'ok', mensaje: `Sincronización completada. ${exitosas} valoración(es) enviada(s) correctamente.` });
+      } else {
+        setEstadoSincronizacion({ tipo: 'warning', mensaje: `Se sincronizaron ${exitosas} valoración(es). Quedan ${pendientes.length} pendiente(s).` });
+      }
+    }
+    setSincronizandoPendientes(false);
   };
 
   useEffect(() => {
-    setPendientesSincronizar(leerColaLocal().length);
+    const colaInicial = leerColaLocal();
+    setPendientesSincronizar(colaInicial.length);
+    setPendientesPreview(colaInicial.slice(-MAX_PENDING_PREVIEW).reverse());
     const onOnline = () => {
       void sincronizarColaLocal();
     };
@@ -267,6 +293,14 @@ export default function CartillaInteractiva() {
     void sincronizarColaLocal();
     return () => window.removeEventListener('online', onOnline);
   }, []);
+
+  useEffect(() => {
+    if (!estadoSincronizacion) {
+      return;
+    }
+    const timer = window.setTimeout(() => setEstadoSincronizacion(null), 4500);
+    return () => window.clearTimeout(timer);
+  }, [estadoSincronizacion]);
 
   const formatearTiempo = (s: number) => {
     const min = Math.floor(s / 60);
@@ -475,6 +509,20 @@ export default function CartillaInteractiva() {
     const profesional = profesionalResponsable.trim() || 'No especificado';
     const observacionBase = progreso.trim() || 'Sin observaciones adicionales.';
     return `[Registro: ${fecha}] [Profesional: ${profesional}] ${observacionBase}`;
+  };
+
+  const formatearFechaPendiente = (isoDate: string) => {
+    const fecha = new Date(isoDate);
+    if (Number.isNaN(fecha.getTime())) {
+      return 'Fecha no disponible';
+    }
+    return fecha.toLocaleString('es-CO', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   useEffect(() => {
@@ -987,8 +1035,33 @@ export default function CartillaInteractiva() {
             <Activity /> Seguimiento Meta Terapéutica
           </h3>
           {pendientesSincronizar > 0 && (
-            <p className="mb-3 text-xs text-amber-800 bg-amber-100 border border-amber-200 rounded-lg px-3 py-2">
-              Hay {pendientesSincronizar} valoración(es) pendiente(s) de sincronización con la nube.
+            <div className="mb-3 rounded-lg border border-amber-200 bg-amber-100 p-3">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                <p className="text-xs text-amber-800">
+                  Hay {pendientesSincronizar} valoración(es) pendiente(s) de sincronización con la nube.
+                </p>
+                <button
+                  onClick={() => void sincronizarColaLocal(true)}
+                  disabled={sincronizandoPendientes}
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold bg-red-800 text-white disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {sincronizandoPendientes ? 'Sincronizando...' : 'Reintentar sincronización'}
+                </button>
+              </div>
+              {pendientesPreview.length > 0 && (
+                <div className="mt-2 space-y-1">
+                  {pendientesPreview.map((pendiente) => (
+                    <p key={pendiente.id} className="text-[11px] text-amber-900">
+                      Paciente: {pendiente.payload.nombre_paciente || 'No registrado'} | Registro: {formatearFechaPendiente(pendiente.createdAt)}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          {estadoSincronizacion && (
+            <p className={`mb-3 text-xs rounded-lg px-3 py-2 border ${estadoSincronizacion.tipo === 'ok' ? 'text-emerald-800 bg-emerald-100 border-emerald-200' : 'text-amber-800 bg-amber-100 border-amber-200'}`}>
+              {estadoSincronizacion.mensaje}
             </p>
           )}
           <div className="mb-4 grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px]">

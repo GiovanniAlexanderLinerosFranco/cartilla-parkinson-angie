@@ -6,17 +6,20 @@
 \usepackage{titlesec}
 \usepackage{fancyhdr}
 \usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, shadows}
 
 % Configuración de márgenes e identidad visual
 \geometry{left=2.54cm,right=2.54cm,top=2.54cm,bottom=2.54cm}
 \definecolor{rojoUMB}{HTML}{8B0000}
+\definecolor{grisFondo}{HTML}{F8F9FA}
 
-% Configuración de encabezados y pies de página
+% Configuración de encabezados
 \pagestyle{fancy}
 \fancyhf{}
-\lhead{\footnotesize Guía de Uso Rápido - Cartilla Interactiva}
-\rhead{\footnotesize BioGALF Home Health}
-\lfoot{\footnotesize Soporte Tecnológico: Giovanni Lineros}
+\lhead{\footnotesize Manual de Usuario - PWA BioGALF}
+\rhead{\footnotesize Fisioterapia Neurológica}
+\lfoot{\footnotesize © 2026 Plataforma de Apoyo a la Decisión Clínica}
 \rfoot{\thepage}
 
 % Estilo de títulos
@@ -25,8 +28,8 @@
 
 \title{
     \vspace{-2cm}
-    \textcolor{rojoUMB}{\textbf{INSTRUCTIVO DE USO RÁPIDO (FISIOTERAPIA)}}\\
-    \large \textit{Cartilla Clínica Digital para el Manejo del Parkinson}
+    \textcolor{rojoUMB}{\textbf{MANUAL DE USUARIO ESTRUCTURADO}}\\
+    \large \textit{Sistema BioGALF para Apoyo a la Decisión Clínica}
 }
 \author{}
 \date{1 de abril de 2026}
@@ -34,54 +37,87 @@
 \begin{document}
 
 \maketitle
-\vspace{-1.5cm} % Ajuste de espacio
+\vspace{-1.5cm}
 
-\section{1. Inicio de Sesión y Registro del Paciente}
-\begin{itemize}
-    \item \textbf{Escudo de Acceso Profesional:} Al abrir la aplicación, la pantalla estará bloqueada por seguridad. Lea el aviso legal y pulse el botón \textit{Declaro ser profesional y acepto los términos} para habilitar el sistema.
-    \item \textbf{Perfil del Paciente:} Antes de iniciar la evaluación, diligencie el nombre completo, el Estadio de Hoehn y Yahr (I-III) y la Evaluación Socio-Ambiental (red de apoyo y barreras en el hogar).
-    \item \textit{Recomendación:} Llene este perfil al inicio de la sesión para que el registro clínico quede estructurado desde el primer minuto.
-\end{itemize}
-
-\section{2. Uso de la Batería Clínica (Cálculo Automático)}
-Abra la prueba que necesite desplegando las opciones. \textbf{Usted no necesita calcular ni sumar nada manualmente.}
-
-\subsection*{TUG Cognitivo (Cronómetro Integrado)}
-\begin{itemize}
-    \item Pulse \textbf{Start} al iniciar la prueba y \textbf{Stop} al finalizar (use \textbf{Reset} si requiere repetir).
-    \item La aplicación mostrará el tiempo y la interpretación automática:
-    \begin{itemize}
-        \item Mayor de 12.6 segundos: \textit{Alerta de alto riesgo de caída}.
-        \item Menor o igual a 12.6 segundos: \textit{Riesgo bajo}.
-    \end{itemize}
-\end{itemize}
-
-\subsection*{Escala de Berg (BBS)}
-\begin{itemize}
-    \item Verá 14 ítems, cada uno con botones de calificación del 0 al 4.
-    \item Seleccione un valor por ítem. El sistema sumará automáticamente el puntaje total sobre 56 y mostrará el nivel de riesgo en tiempo real.
-\end{itemize}
-
-\subsection*{FGA y UPDRS}
-\begin{itemize}
-    \item \textbf{FGA:} Seleccione el puntaje (0 a 3) en los 10 ítems. La PWA calcula el total y genera un resumen funcional de la marcha.
-    \item \textbf{UPDRS:} Ingrese el resultado en el campo de texto libre o numérico según su criterio.
-\end{itemize}
-
-\section{3. Piloto de Tecnologías RV}
-Esta sección es un apoyo complementario. Al hacer clic en el botón \textbf{Lanzar Simulación Piloto}, se abrirá una ventana emergente indicando que el \textit{"Entorno de Simulación RV en Construcción - BioGALF"} está en desarrollo. Cierre la ventana y continúe con la valoración.
-
-\section{4. Guardado Final de la Valoración en la Nube}
-\begin{itemize}
-    \item \textbf{Regla de Integridad:} El botón \textit{Guardar Valoración} permanecerá bloqueado por defecto. Se habilitará únicamente cuando usted diligencie \textbf{al menos 2 pruebas clínicas} de la batería (Ej. TUG + Berg).
-    \item Una vez habilitado, al guardar, todos los datos se envían a la nube de \textbf{BioGALF} para garantizar la trazabilidad clínica.
-\end{itemize}
+\section{1. Flujo de Trabajo Secuencial}
+Para garantizar la integridad de los datos, la aplicación está diseñada con un flujo lógico estricto.
 
 \vspace{0.5cm}
-\noindent\fbox{%
-    \parbox{\textwidth}{%
-        \textbf{Nota de Responsabilidad Profesional:} La aplicación automatiza cálculos e interpreta rangos de riesgo basándose en evidencia científica; sin embargo, la validación final y la decisión terapéutica continúan siendo responsabilidad exclusiva del fisioterapeuta tratante.
-    }%
-}
+\begin{center}
+\begin{tikzpicture}[
+    node distance=2cm,
+    auto,
+    block/.style={rectangle, draw=rojoUMB, fill=grisFondo, text width=4cm, text centered, rounded corners, minimum height=1.2cm, drop shadow, font=\footnotesize},
+    line/.style={draw, -{Latex[length=2.5mm]}, rojoUMB, thick}
+]
+    % Nodos
+    \node [block] (acceso) {\textbf{1. Escudo Profesional}\\Aceptación legal};
+    \node [block, below=0.8cm of acceso] (perfil) {\textbf{2. Perfil Paciente}\\Datos y entorno};
+    \node [block, below=0.8cm of perfil] (bateria) {\textbf{3. Batería Clínica}\\TUG, BBS, FGA};
+    \node [block, right=1.5cm of bateria] (cueing) {\textbf{4. Metrónomo}\\Estimulación rítmica};
+    \node [block, below=0.8cm of bateria] (guardar) {\textbf{5. Guardar en Nube}\\Registro validado};
+
+    % Líneas
+    \path [line] (acceso) -- (perfil);
+    \path [line] (perfil) -- (bateria);
+    \path [line] (bateria) -- (guardar);
+    \path [line, dashed] (bateria) -- (cueing);
+    \path [line, dashed] (cueing) |- (guardar);
+\end{tikzpicture}
+\end{center}
+\vspace{0.5cm}
+
+\begin{enumerate}
+    \item \textbf{Aceptar acceso profesional:} Lea el aviso legal y acepte para habilitar la cartilla.
+    \item \textbf{Llenar perfil del paciente:} Registre el nombre, el estadio de Parkinson y la evaluación socio-ambiental antes de iniciar las pruebas.
+    \item \textbf{Ejecutar batería clínica:} Aplique TUG Cognitivo, Berg, FGA o UPDRS.
+    \item \textbf{Usar Cueing con Metrónomo:} Active el estímulo rítmico según el objetivo terapéutico.
+    \item \textbf{Guardar valoración:} Finalice guardando la sesión (se habilita tras 2 pruebas).
+\end{enumerate}
+
+\section{2. Explicación de Herramientas Clínicas}
+\textit{Nota: La plataforma automatiza todos los cálculos y rangos de riesgo. No use calculadoras externas.}
+
+\subsection*{TUG Cognitivo (Cronómetro Integrado)}
+Presione \textbf{Start} al inicio y \textbf{Stop} al finalizar. El sistema evalúa automáticamente el punto de corte clínico (12.6 segundos) para detectar el riesgo de caída.
+
+\subsection*{Escala de Berg (BBS) y FGA}
+Seleccione los valores con los botones rápidos (0 al 4). El puntaje total se suma en tiempo real y la interpretación de riesgo se genera automáticamente.
+
+\section{3. Nueva Herramienta de Cueing (Metrónomo)}
+Diseñada para facilitar la regularidad de la marcha y combatir el \textit{Freezing of Gait} (congelamiento).
+
+\vspace{0.5cm}
+\begin{center}
+\begin{tikzpicture}
+    % Celular simulado
+    \draw[rounded corners=4mm, thick, rojoUMB, fill=grisFondo] (0,0) rectangle (6,4);
+    
+    % Elementos del metrónomo
+    \node[font=\bfseries, rojoUMB] at (3,3.3) {Estimulación Sensorial};
+    \draw[thick, rojoUMB] (1,2.5) -- (5,2.5); % Slider
+    \filldraw[rojoUMB] (2.5,2.5) circle (3pt); % Handle
+    \node[font=\footnotesize] at (3,2.1) {Ajuste: 40 - 120 BPM};
+    
+    % Botón
+    \draw[rounded corners, fill=rojoUMB!80, draw=none] (2,0.8) rectangle (4,1.6);
+    \node[text=white, font=\footnotesize\bfseries] at (3,1.2) {INICIAR};
+    
+    % Ondas de sonido y luz
+    \draw[rojoUMB, thick] (6.5,2.5) arc (-45:45:0.5);
+    \draw[rojoUMB, thick] (6.8,2.8) arc (-45:45:0.8);
+    \node[font=\footnotesize, text width=3cm] at (8.5,2) {\textbf{Pulso Sincronizado}\\- Beep Auditivo\\- Parpadeo Visual};
+\end{tikzpicture}
+\end{center}
+\vspace{0.5cm}
+
+\begin{itemize}
+    \item \textbf{Ajuste BPM:} Use el control deslizante (40 a 120 BPM). Comience en un valor confortable (ej. 60) y ajuste según la estabilidad del paciente.
+    \item \textbf{Señal Auditiva (Beep):} Marca el pulso temporal para sincronizar los pasos.
+    \item \textbf{Señal Visual (Parpadeo):} Refuerza el ritmo para pacientes con fatiga atencional.
+\end{itemize}
+
+\section{4. Condición de Guardado Estricto}
+El botón \textbf{Guardar Valoración} permanece deshabilitado por seguridad de datos. \textbf{Se habilitará únicamente tras completar al menos 2 pruebas de la batería clínica.} Esta regla protege la integridad del registro en la base de datos y evita historiales incompletos.
 
 \end{document}

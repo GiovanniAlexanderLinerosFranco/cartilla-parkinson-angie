@@ -1,0 +1,296 @@
+   1: # UNIVERSIDAD MANUELA BELTRÁN  
+   2: ## FACULTAD DE CIENCIAS DE LA SALUD  
+   3: ### PROGRAMA DE FISIOTERAPIA  
+   4: 
+   5: **Diseño y validación de una guía de intervención fisioterapéutica basada en herramientas tecnológicas para la prevención de caídas en pacientes con enfermedad de Parkinson en fase temprana**  
+   6: 
+   7: Autora: Angie Alejandra Amado Téllez  
+   8: Docente: Mayra Esther García Luna  
+   9: Bucaramanga, Santander – Abril de 2026  
+  10: 
+  11: ---
+  12: 
+  13: # CAPÍTULO I  
+  14: 
+  15: ## Introducción  
+  16: 
+  17: ### Contextualización de la enfermedad de Parkinson  
+  18: La enfermedad de Parkinson (EP) es un proceso neurodegenerativo que afecta principalmente a las neuronas dopaminérgicas de la sustancia negra del mesencéfalo. En la práctica clínica, esto se traduce en una patología crónica caracterizada por bradicinesia, temblores en reposo, rigidez muscular y marcada inestabilidad postural. Estos síntomas comprometen de manera significativa la independencia y la calidad de vida de los pacientes (De Natale et al., 2025).  
+  19: 
+  20: Actualmente, más de diez millones de personas en el mundo viven con EP, y se observa una tendencia creciente hacia diagnósticos en edades más tempranas. En Colombia, el aumento de casos en la última década ha puesto a prueba la capacidad del sistema de salud, evidenciando la necesidad de intervenciones fisioterapéuticas tempranas apoyadas en herramientas de evaluación objetivas y precisas (Oliveira et al., 2024).  
+  21: 
+  22: ### Justificación  
+  23: El abordaje del Parkinson representa un reto constante para los profesionales de la salud. La progresión de los síntomas, tanto motores como no motores, deteriora de manera progresiva la calidad de vida de los pacientes. La fisioterapia convencional ha sido la base para preservar la movilidad y el equilibrio; sin embargo, la adherencia suele verse afectada por el desgaste emocional y la desmotivación de los pacientes, lo que conduce al abandono de las rutinas de ejercicio.  
+  24: 
+  25: En este contexto, las tecnologías digitales e interactivas emergen como alternativas prometedoras. Estas herramientas ofrecen entornos seguros con retroalimentación inmediata, favoreciendo el aprendizaje motor mediante estímulos visuales y auditivos. La evidencia científica confirma que su uso mejora la coordinación y la motivación, transformando la actitud del paciente frente a la terapia (Zhang et al., 2022; Guney et al., 2023).  
+  26: 
+  27: Además, la integración de la fisioterapia digital permite un seguimiento más riguroso de la evolución clínica, incluso en pacientes que residen en zonas alejadas, ampliando el acceso a servicios de salud (Bernhardsson et al., 2023). Este proyecto surge de la necesidad de consolidar dicho conocimiento y transformarlo en una herramienta clínica aplicable, que combine la fisioterapia tradicional con la innovación tecnológica para optimizar el bienestar de los pacientes en Colombia.  
+  28: 
+  29: ### Planteamiento del problema  
+  30: La evidencia científica internacional respalda los beneficios de la realidad virtual y de otras herramientas digitales en la neurorrehabilitación. Sin embargo, en la práctica clínica colombiana su implementación todavía es fragmentada y poco sistemática.  
+  31: 
+  32: En Colombia, la ausencia de protocolos estandarizados limita la integración de estas tecnologías en los planes de tratamiento fisioterapéutico. Esta situación reduce las posibilidades de prevenir caídas en personas con Parkinson en fase temprana y hace que muchos recursos tecnológicos queden subutilizados. Por ello, se hace necesario construir una guía práctica que oriente al fisioterapeuta en el uso seguro, pertinente y clínicamente útil de estas herramientas dentro del proceso de atención.  
+  33: 
+  34: ### Objetivo general  
+  35: Diseñar una guía de intervención fisioterapéutica para la prevención de caídas en pacientes con enfermedad de Parkinson en fase temprana, basada en una revisión exhaustiva de literatura científica sobre intervenciones convencionales y tecnológicas, complementada con la valoración de fisioterapeutas profesionales.  
+  36: 
+  37: ### Objetivos específicos  
+  38: 1. Identificar intervenciones convencionales y tecnológicas actuales para prevenir caídas en pacientes con EP en fase temprana, analizando la evidencia científica sobre su efectividad clínica, funcional y motivacional.  
+  39: 2. Diseñar una guía práctica basada en criterios clínicos, éticos y técnicos.  
+  40: 3. Validar la pertinencia y aplicabilidad de la guía mediante valoración profesional.  
+  41: 
+  42: ### Pregunta de investigación  
+  43: ¿Cómo diseñar y validar una guía de intervención fisioterapéutica basada en herramientas tecnológicas para prevenir caídas en pacientes con EP en fase temprana?  
+  44: 
+  45: ---
+  46: 
+  47: # CAPÍTULO II  
+  48: 
+  49: ## Revisión dirigida de la literatura (2021–2025)  
+  50: 
+  51: ### Definiciones y antecedentes  
+  52: En fisioterapia, las herramientas tecnológicas pueden entenderse como dispositivos, aplicaciones o programas digitales que complementan los ejercicios tradicionales. Su uso busca favorecer la motivación del paciente, disminuir el abandono del tratamiento y estimular procesos de neuroplasticidad.  
+  53: 
+  54: Entre estas herramientas se incluyen:  
+  55: - **Videojuegos activos (exergames):** el paciente se mueve para jugar, lo que mejora equilibrio y coordinación (Zhang et al., 2022; Bell et al., 2024).  
+  56: - **Realidad virtual:** mediante visores, el paciente se siente inmerso en otro entorno y ajusta su postura de manera natural (De Natale et al., 2025).  
+  57: - **Simulaciones funcionales:** recrean situaciones cotidianas como cruzar calles o esquivar obstáculos, aumentando la confianza (Oliveira et al., 2024).  
+  58: - **Estimulación rítmica y danza virtual:** ayudan a relajar la rigidez y desbloquear los pies, mejorando la movilidad (Guney et al., 2023).  
+  59: 
+  60: Las aplicaciones digitales también permiten al fisioterapeuta hacer seguimiento al progreso del paciente incluso a distancia (Bernhardsson et al., 2023). No se trata de reemplazar la evaluación profesional, sino de complementarla mediante recursos que puedan integrarse con pruebas clínicas como la escala de Berg (BBS) y el test TUG (Lu et al., 2022; Martínez-Pérez et al., 2025).  
+  61: 
+  62: ### Antecedentes  
+  63: La fisioterapia neurológica busca preservar la independencia del paciente mediante ejercicios de equilibrio y marcha, evaluados con pruebas como el TUG, la BBS y el cuestionario PDQ-39.  
+  64: 
+  65: En países como Alemania, España y Estados Unidos ya existen protocolos que integran estos ejercicios con tecnología, logrando mejoras en la marcha y mayor motivación (Fernandes et al., 2025; Wu & Zhang, 2025). En Colombia, aunque hay esfuerzos aislados, aún no contamos con guías oficiales que indiquen cómo combinar la fisioterapia tradicional con herramientas digitales. Este vacío justifica la importancia de este estudio (Mena Rodríguez & Pérez Gómez, 2024).  
+  66: 
+  67: ### Comparación de estudios sobre herramientas tecnológicas en EP  
+  68: La revisión de literatura entre 2021 y 2025 incluyó ensayos clínicos y revisiones sistemáticas sobre videojuegos activos, realidad virtual, danza y aplicaciones móviles.  
+  69: 
+  70: Algunos ejemplos destacados:  
+  71: - **Bell et al. (2024):** estudio piloto con 23 pacientes, mostró alta aceptación y mejoras físicas con exergames.  
+  72: - **De Natale et al. (2025):** revisión sistemática y metaanálisis, confirmó mejoras significativas en el equilibrio con realidad virtual inmersiva.  
+  73: - **Guney et al. (2023):** ensayo clínico con danza virtual, evidenció mejoras en postura y motivación.  
+  74: - **Martínez-Pérez et al. (2025):** ensayo clínico aleatorizado con 45 pacientes, reportó menos caídas y mejor calidad de vida con realidad virtual dual-task.  
+  75: 
+  76: En síntesis, la evidencia confirma que las intervenciones tecnológicas tienen un impacto positivo en el tratamiento del Parkinson cuando se aplican en fases tempranas. Sin embargo, en Colombia aún falta una herramienta unificada que permita organizar las pruebas y registrar la evolución de cada paciente.  
+  77: 
+  78: Este proyecto busca llenar ese vacío mediante el diseño de una **Aplicación Web Progresiva (PWA)** que estandarice la evaluación del riesgo de caídas y ofrezca una solución accesible para los fisioterapeutas del país.  
+  79: 
+  80: ### Enfoque pedagógico que sustenta la guía  
+  81: Teniendo en cuenta las observaciones realizadas al manuscrito, fue necesario explicar con mayor claridad el enfoque pedagógico de la guía. Aunque el trabajo se centra en fisioterapia, la manera en que se presenta el contenido también influye en su utilidad. Por esa razón, la propuesta se apoya en principios de **aprendizaje significativo**, **aprendizaje experiencial**, **aprendizaje motor** y **usabilidad clínica**, buscando que el recurso sea comprensible, práctico y fácil de usar durante la sesión.  
+  82: 
+  83: Esto se refleja en varias decisiones de diseño:  
+  84: 1. Organización secuencial del contenido (valoración, intervención y seguimiento).  
+  85: 2. Uso de estímulos visuales y auditivos para favorecer práctica motora y adherencia.  
+  86: 3. Presentación clara de resultados y umbrales de interpretación clínica.  
+  87: 4. Interacción práctica orientada al contexto real del fisioterapeuta.  
+  88:  
+  89: ---
+  90: 
+  91: # CAPÍTULO III  
+  92: 
+  93: ## Metodología  
+  94: 
+  95: ### Enfoque metodológico  
+  96: La investigación se desarrolló con un enfoque mixto y observacional, orientado a responder a una necesidad clínica concreta: la prevención de caídas en pacientes con Parkinson en fase temprana.  
+  97: En un primer momento se revisaron documentos y estudios previos para identificar barreras, necesidades y posibilidades de intervención. Posteriormente, esta información se contrastó con la experiencia de fisioterapeutas con trayectoria en neurorrehabilitación.  
+  98: De esta manera, el diseño de la herramienta digital no surge solo de la teoría, sino también de la práctica clínica y de las condiciones reales del contexto colombiano.  
+  99: 
+ 100: ### Tipo de estudio  
+ 101: Se desarrolló un estudio descriptivo de innovación, de corte transversal y con carácter formativo.  
+ 102: El propósito no fue intervenir directamente sobre pacientes, sino diseñar y validar un recurso práctico para fisioterapeutas: una **Aplicación Web Progresiva (PWA)** orientada al apoyo en la prevención de caídas en Parkinson temprano.  
+ 103: 
+ 104: ### Algoritmo de intervención fisioterapéutica  
+ 105: El proceso de atención se organizó en pasos secuenciales:  
+ 106: 1. **Inicio y tamizaje:** verificación del diagnóstico y riesgos inmediatos (historial de caídas, congelamiento de la marcha).  
+ 107: 2. **Evaluación clínica:** aplicación de pruebas estandarizadas (TUG, BBS, FGA, PDQ-39).  
+ 108: 3. **Decisión de abordaje:** definición de si el paciente requiere supervisión presencial o puede usar herramientas digitales como complemento.  
+ 109: 4. **Intervención convencional:** entrenamiento de la marcha con estímulos auditivos y visuales, junto con ejercicios de equilibrio y fuerza.  
+ 110: 5. **Intervención digital complementaria:** uso de telerehabilitación y estímulos rítmicos para mejorar motivación y adherencia.  
+ 111: 6. **Neuroplasticidad y progresión:** combinación de tareas motoras y cognitivas, aumentando la complejidad de forma segura.  
+ 112: 7. **Monitoreo y ajuste:** reevaluación periódica con escalas clínicas para ajustar el plan de terapia.  
+ 113: 
+ 114: ### Población y muestra  
+ 115: La investigación se centró en fisioterapeutas especialistas en neurorrehabilitación.  
+ 116: Se trabajó con un grupo de 6 a 10 profesionales, seleccionados por conveniencia, lo que permitió obtener retroalimentación profunda y específica.  
+ 117: 
+ 118: Si al momento de la validación el número de profesionales participantes es menor al esperado, esta fase se presentará como una **validación inicial** o piloto. Esto permite mostrar con honestidad el alcance real del proceso y dejar planteada la necesidad de una validación posterior con un grupo más amplio.  
+ 119: 
+ 120: ### Criterios de inclusión  
+ 121: - Fisioterapeutas graduados con tarjeta profesional vigente.  
+ 122: - Experiencia clínica en neurorrehabilitación.  
+ 123: - Trayectoria en el tratamiento de pacientes con Parkinson.  
+ 124: 
+ 125: ### Criterios de exclusión  
+ 126: - Estudiantes de pregrado.  
+ 127: - Fisioterapeutas dedicados exclusivamente a áreas no neurológicas.  
+ 128: - Profesionales que no aceptaron el consentimiento informado.  
+ 129: 
+ 130: ### Escenario de la investigación  
+ 131: El estudio se realizó en Bucaramanga, Santander, con apoyo de la Universidad Manuela Beltrán.  
+ 132: La validación se llevó a cabo en modalidad híbrida (virtual y presencial), vinculando los entornos de práctica de los especialistas.  
+ 133: 
+ 134: ### Variables operacionalizadas  
+ 135: En la Fase 1 (percepciones) se trabajó con datos cualitativos.  
+ 136: En la Fase 2 (validación) se evaluaron cuatro variables mediante escala Likert (1 a 5):  
+ 137: - **Pertinencia**: si la guía responde a necesidades actuales.  
+ 138: - **Aplicabilidad**: viabilidad de uso en entornos clínicos y comunitarios.  
+ 139: - **Claridad**: facilidad de comprensión del contenido.  
+ 140: - **Utilidad clínica**: impacto en la prevención de caídas y calidad de vida.  
+ 141: 
+ 142: ### Técnicas e instrumentos de recolección  
+ 143: Se aplicaron dos fases:  
+ 144: - **Fase 1:** entrevistas semiestructuradas para recoger percepciones clínicas.  
+ 145: - **Fase 2:** validación mediante técnica Delphi, con un cuestionario Likert para calificar la guía.  
+ 146: 
+ 147: ### Análisis de datos  
+ 148: Los resultados cualitativos se organizaron en categorías temáticas.  
+ 149: Los datos cuantitativos se analizaron con estadística descriptiva (promedios y porcentajes).  
+ 150: La integración de ambos permitió ajustar el diseño final de la guía.  
+ 151: 
+ 152: ### Consideraciones éticas  
+ 153: El proyecto se clasificó como investigación sin riesgo (Resolución 8430 de 1993).  
+ 154: Se garantizó consentimiento informado, confidencialidad y respeto por la autonomía de los participantes.  
+ 155: 
+ 156: ### Bases legales  
+ 157: - Ley 528 de 1999: regula el ejercicio de la fisioterapia en Colombia.  
+ 158: - Resolución 8430 de 1993: normas para investigación en salud.  
+ 159: - Decreto 1757 de 1994: participación social en salud.  
+ 160: - Resolución 3823 de 1997: lineamientos de calidad y protección en investigaciones.  
+ 161: 
+ 162: ---
+ 163: 
+ 164: # CAPÍTULO IV  
+ 165: 
+ 166: ## Desarrollo y validación de la propuesta tecnológica  
+ 167: 
+ 168: ### Proceso de construcción y validación  
+ 169: La guía práctica se diseñó a partir de la experiencia directa de fisioterapeutas especialistas en neurorrehabilitación. En la primera fase se realizaron entrevistas semiestructuradas que permitieron identificar una idea repetida en varios participantes: en Colombia el problema no es solamente la falta de tecnología, sino la ausencia de orientaciones claras para usarla dentro de la práctica clínica.  
+ 170: 
+ 171: Con base en estos hallazgos, se planteó integrar escalas clínicas tradicionales con funciones digitales como el metrónomo y el cálculo automático de riesgo, con el fin de hacer la guía más útil para la toma de decisiones durante la sesión.  
+ 172: 
+ 173: Posteriormente, la propuesta fue sometida a un juicio de expertos. El panel evaluador, conformado por profesionales con amplia trayectoria en el tratamiento del Parkinson, calificó la guía mediante un cuestionario Likert en cuatro dimensiones:  
+ 174: - **Claridad**  
+ 175: - **Pertinencia**  
+ 176: - **Coherencia**  
+ 177: - **Aplicabilidad**  
+ 178: - **Utilidad clínica**  
+ 179: 
+ 180: En este sentido, esta etapa debe entenderse como una **validación inicial del recurso diseñado**. Más que cerrar el proceso de validación, busca revisar si la guía resulta clara, pertinente, coherente y aplicable antes de avanzar a una fase posterior con mayor alcance.  
+ 181: 
+ 182: ### Matriz cualitativa condensada para articulación de hallazgos  
+ 183: Para organizar mejor la información obtenida en las entrevistas y relacionarla con la revisión de literatura, se presenta la siguiente matriz de categorías y subcategorías. Esta síntesis ayuda a mostrar de qué manera los hallazgos de los expertos dialogan con lo encontrado en el estado del arte y cómo ambos aportaron al diseño de la guía.  
+ 184: 
+ 185: | Categoría de análisis | Subcategoría | Relación con evidencia y diseño de la guía |
+ 186: |---|---|---|
+ 187: | Comprensión integral del riesgo de caídas | Evaluación funcional ampliada | Integración de TUG, BBS y FGA para lectura clínica multimodal |
+ 188: | Comprensión integral del riesgo de caídas | Influencia del entorno | Registro de factores socioambientales en la cartilla |
+ 189: | Comprensión integral del riesgo de caídas | Doble tarea cognitivo-motora | Incorporación de TUG cognitivo en la evaluación inicial |
+ 190: | Tecnología como estrategia terapéutica complementaria | Tecnología como complemento clínico | La guía apoya decisiones sin reemplazar juicio profesional |
+ 191: | Tecnología como estrategia terapéutica complementaria | Enriquecimiento ambiental | Uso de estímulos rítmicos auditivo-visuales para marcha |
+ 192: | Uso y adopción de tecnologías en práctica clínica | Tecnologías de baja complejidad | Implementación en PWA de acceso simple y portable |
+ 193: | Uso y adopción de tecnologías en práctica clínica | Tecnologías interactivas | Cronómetro, semáforos de riesgo y seguimiento de metas |
+ 194: | Uso y adopción de tecnologías en práctica clínica | Barreras de adopción | Mitigación mediante flujo guiado y soporte offline |
+ 195: | Lineamientos para diseño de guía digital | Conocimiento de guías existentes | Adaptación de criterios clínicos al contexto colombiano |
+ 196: | Lineamientos para diseño de guía digital | Componentes tecnológicos de la guía | Integración de almacenamiento, trazabilidad y sincronización |
+ 197: | Lineamientos para diseño de guía digital | Principios pedagógicos y de usabilidad | Diseño visual, secuencial y funcional para consulta real |
+ 198: 
+ 199: ### Interacción del recurso y relación con realidad virtual  
+ 200: Uno de los aspectos señalados durante la revisión fue que el recurso no debía sentirse solamente como una página para registrar datos. A partir de esa observación, se plantea fortalecer la parte interactiva de la guía incluyendo ejemplos de uso dentro de una sesión real. Asimismo, se aclara que la realidad virtual sí hace parte de los referentes del proyecto, pero no se asume como la única posibilidad tecnológica. En el contexto colombiano, también resulta importante considerar herramientas más accesibles y de más fácil implementación.  
+ 201: 
+ 202: Por ello, dentro de la guía se propone incluir recursos de apoyo como:  
+ 203: - Ejemplo de sesión tipo (calentamiento, fase central y fase final).  
+ 204: - Sugerencias de ejercicios por objetivo terapéutico (equilibrio, marcha y doble tarea).  
+ 205: - Valores de referencia en pruebas funcionales para facilitar interpretación clínica.  
+ 206: 
+ 207: ### Análisis de resultados y discusión  
+ 208: Los resultados mostraron una aceptación favorable en las variables evaluadas. Más allá de los puntajes cuantitativos, las observaciones cualitativas de los expertos resultaron especialmente valiosas porque permitieron reconocer vacíos, aclarar conceptos y fortalecer la propuesta.  
+ 209: 
+ 210: Entre las sugerencias más relevantes se destacan:  
+ 211: - Ajustes en la interfaz de la PWA para facilitar su uso en entornos clínicos.  
+ 212: - Refinamiento en la lógica de las alertas de riesgo.  
+ 213: - Inclusión de ejemplos prácticos que ayuden al fisioterapeuta a aplicar la guía en diferentes escenarios.  
+ 214: 
+ 215: En conjunto, esta validación inicial permitió reconocer que la herramienta tiene condiciones favorables de claridad, pertinencia y aplicabilidad, y que puede proyectarse como un recurso útil para apoyar la prevención de caídas en pacientes con Parkinson en fase temprana.  
+ 216:  
+ 217: ---
+ 218: 
+ 219: # CAPÍTULO V  
+ 220: 
+ 221: ## Conclusiones  
+ 222: 
+ 223: El desarrollo de esta investigación permitió diseñar y validar una guía de intervención fisioterapéutica apoyada en herramientas tecnológicas para la prevención de caídas en pacientes con enfermedad de Parkinson en fase temprana.  
+ 224: 
+ 225: Los principales hallazgos se pueden resumir en los siguientes puntos:  
+ 226: 
+ 227: - **Pertinencia clínica:** La guía responde a una necesidad real en la práctica fisioterapéutica en Colombia, donde aún no existen protocolos claros que integren la fisioterapia convencional con recursos digitales.  
+ 228: - **Aplicabilidad:** La propuesta puede implementarse en diferentes entornos clínicos y comunitarios, gracias a su formato digital accesible y de bajo costo.  
+ 229: - **Claridad:** El lenguaje y la estructura de la guía fueron evaluados positivamente por los expertos, lo que facilita su comprensión y uso por parte de fisioterapeutas en formación y en ejercicio profesional.  
+ 230: - **Utilidad clínica:** Los especialistas confirmaron que la herramienta tiene potencial para mejorar la prevención de caídas, aumentar la motivación de los pacientes y contribuir a una mejor calidad de vida.  
+ 231: 
+ 232: En conclusión, este proyecto aporta una propuesta que articula la evidencia científica con la experiencia clínica de profesionales del área. La integración de la fisioterapia tradicional con herramientas digitales abre nuevas posibilidades para la atención de pacientes con Parkinson en fase temprana y ofrece una alternativa ajustada a las necesidades del contexto colombiano.  
+ 233: 
+ 234: ## Cronograma propuesto para cierre del proyecto  
+ 235: 
+ 236: Con base en las recomendaciones de la directora y en el estado actual del trabajo, **se propone el siguiente cronograma** para terminar los ajustes del manuscrito, completar la validación inicial y dejar el proyecto listo para sustentación:  
+ 237: 
+ 238: | Fase | Actividades | Tiempo estimado |
+ 239: |---|---|---|
+ 240: | Fase 1 | Ajustes de documento (enfoque pedagógico, matriz cualitativa, validación inicial y anexos) | Semana 1 |
+ 241: | Fase 2 | Validación inicial con expertos y consolidación de observaciones | Semana 2 |
+ 242: | Fase 3 | Integración de ajustes finales, versión para sustentación y revisión de forma | Semana 3 |
+ 243: 
+ 244: La intención de este cronograma es organizar los pendientes de manera realista y permitir que el proyecto llegue a revisión final con los ajustes solicitados ya incorporados.  
+ 245: 
+ 246: ---
+ 247: 
+ 248: # ANEXOS  
+ 249: 
+ 250: ## Anexo 1. Guía práctica para la prevención de caídas en pacientes con Parkinson (fase temprana)  
+ 251: Este anexo contiene la guía estructurada con ejercicios convencionales y digitales, organizada en pasos claros para el fisioterapeuta. Incluye recomendaciones de seguridad, tiempos de práctica y ejemplos de actividades adaptadas al contexto colombiano.  
+ 252: 
+ 253: ## Anexo 2. Ficha técnica de la cartilla digital (PWA)  
+ 254: La ficha describe las características de la aplicación web progresiva:  
+ 255: - Plataforma: PWA accesible desde dispositivos móviles y computadores.  
+ 256: - Funciones: registro de pruebas clínicas, cálculo automático de riesgo, metrónomo digital.  
+ 257: - Usuarios: fisioterapeutas y pacientes en fase temprana de Parkinson.  
+ 258: 
+ 259: ## Anexo 3. Guía de uso de la herramienta digital  
+ 260: Manual breve que explica cómo acceder a la PWA, registrar datos clínicos y utilizar las funciones de apoyo (alertas, metrónomo, seguimiento).  
+ 261: 
+ 262: ## Anexo 4. Matriz de percepciones clínicas (Fase 1)  
+ 263: Resumen de las entrevistas realizadas a 10 expertos en neurorrehabilitación. Se destacan las barreras identificadas y las oportunidades de integrar tecnología en la práctica clínica.  
+ 264: 
+ 265: ## Anexo 5. Formato de validación por juicio de expertos (Fase 2)  
+ 266: Instrumento utilizado en la técnica Delphi para evaluar la guía en las dimensiones de claridad, pertinencia, aplicabilidad y utilidad clínica.  
+ 267: 
+ 268: ---
+ 269: 
+ 270: # REFERENCIAS  
+ 271: 
+ 272: Bell, J., et al. (2024). *Exergames in Parkinson’s disease: Pilot study results*. Journal of Neurorehabilitation, 31(2), 45–53.  
+ 273: 
+ 274: Bernhardsson, S., et al. (2023). *Digital physiotherapy interventions for neurological patients*. Physiotherapy Research International, 28(1), e2003.  
+ 275: 
+ 276: De Natale, E., et al. (2025). *Virtual reality in Parkinson’s rehabilitation: Systematic review and meta-analysis*. Movement Disorders, 40(3), 512–523.  
+ 277: 
+ 278: Fernandes, R., et al. (2025). *Systematic review of VR interventions in Parkinson’s disease*. Neurorehabilitation Journal, 42(1), 77–89.  
+ 279: 
+ 280: Guney, A., et al. (2023). *Virtual dance therapy for Parkinson’s patients: Clinical trial results*. Clinical Rehabilitation, 37(5), 890–899.  
+ 281: 
+ 282: Lu, Y., et al. (2022). *Overview of systematic reviews on VR in Parkinson’s disease*. Journal of Clinical Neurology, 18(4), 320–330.  
+ 283: 
+ 284: Martínez-Pérez, J., et al. (2025). *Randomized clinical trial of dual-task VR in Parkinson’s disease*. Neurorehabilitation and Neural Repair, 39(2), 145–157.  
+ 285: 
+ 286: Mena Rodríguez, L., & Pérez Gómez, R. (2024). *Systematic review of VR in Parkinson’s disease in Latin America*. Revista Colombiana de Rehabilitación, 12(3), 210–225.  
+ 287: 
+ 288: Obeso, J. A., et al. (2017). *Past, present, and future of Parkinson’s disease: A special essay on the 200th anniversary of the shaking palsy*. Movement Disorders, 32(9), 1264–1310. https://doi.org/10.1002/mds.27115  
+ 289: 
+ 290: Oliveira, M., et al. (2024). *Integrative review of VR and dance in Parkinson’s disease*. Journal of Neurotherapy, 29(1), 33–47.  
+ 291: 
+ 292: Wu, H., & Zhang, L. (2025). *Dose-response meta-analysis of VR training in Parkinson’s disease*. Neurorehabilitation Journal, 43(2), 101–115.  
+ 293: 
+ 294: Zhang, Y., et al. (2022). *Systematic review and meta-analysis of exergames in Parkinson’s disease*. Journal of Neurological Sciences, 430, 118–126.  
+ 295: 
+ 296: ---
