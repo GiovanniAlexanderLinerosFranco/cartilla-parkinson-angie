@@ -25,7 +25,13 @@ export default function ValidacionExpertos() {
         observaciones: form.observaciones
       }
     ]);
-    if (!error) setEnviado(true);
+    
+    // Aquí está el chismoso:
+    if (error) {
+      alert("Hubo un error de conexión: " + error.message);
+    } else {
+      setEnviado(true);
+    }
   };
 
   if (enviado) {
